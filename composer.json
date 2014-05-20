@@ -1,0 +1,31 @@
+{
+    "name": "creoLIFE/phpDBMapper",
+    "type": "library",
+    "description": "creoLIFE phpDBMapper for Zend Framework 1.x",
+    "keywords": ["Zend", "Zend libraries", "DB DAO","Db Entity", "DB Repository", "DB Mapper", "DB Class mapper", "DB DAO Entity Repository Mapper", "DB validation"],
+    "homepage":"http://www.creolife.pl",
+    "time":"2014-05-20",
+    "version":"1.0.0",
+    "license":"MIT",
+    "authors": [
+        {
+            "name": "Miroslaw Ratman",
+            "email": "office@creolife.info",
+            "homepage": "http://www.creolife.pl",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/creoLIFE/phpDBMapper.git"
+        }
+    ],
+    "require": {
+        "zendframework/zendframework1": "=1.12.6"
+    },
+    "autoload": {
+    }
+}
