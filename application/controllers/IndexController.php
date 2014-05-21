@@ -8,8 +8,14 @@ class IndexController extends Zend_Controller_Action
         $form = new Application_Form_Generate();
         $this->view->form = $form;
 
-        //$albums = new Application_Model_DbTable_Albums();
-        //$this->view->albums = $albums->fetchAll();
+        $params = $this->_request->getParams();
+        $post = $this->_request->getPost();
+
+
+        if( isset($params['do']) && $params['do'] === 'generate'){
+            echo "aa";
+        }
+
     }
 
 }

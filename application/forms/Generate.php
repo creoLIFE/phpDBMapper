@@ -5,6 +5,7 @@ class Application_Form_Generate extends Zend_Form
     public function init()
     {
         $this->setName('phpDBMapper');
+        $this->setAction('?do=generate');
 
         $id = new Zend_Form_Element_Hidden('id');
         $id->addFilter('Int');
