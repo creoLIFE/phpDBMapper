@@ -1,0 +1,224 @@
+<?php
+/**
+ * DAO definition for %pClassName%
+ * @package %pMapperPrefix%_Dao
+ * @author Mirek Ratman
+ * @version 1.0
+ * @since %pDate%
+ * @license The MIT License (MIT)
+ * @copyright %pYear% creoLIFE.pl
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
+
+class %pMapperPrefix%_Dao_%pClassName%
+{
+    /**
+     * @var $db
+     */
+    private $db;
+
+    /**
+    * Class constructor
+    * @method __construct
+    * @param string $dbDefinition = definition name for db access in config
+    * @return boolean
+    */
+    public function __construct( $dbConfig ){
+
+        if( $dbConfig != null && is_object($dbConfig) ){
+            //set DB name
+            $_dbName = $dbConfig->params->dbname;
+
+            if( Zend_Registry::isRegistered('db_'.$_dbName) ){
+                //Get instance of DB
+                $this->db = Zend_Registry::get('db_'.$_dbName);
+            }
+            else{
+                //instance DB
+                $this->db = Zend_Db::factory( $dbConfig );
+                //Register this instance of DB
+                Zend_Registry::set('db_'.$_dbName, $this->db);
+            }
+            
+            //Set UTF-8 coding for each request
+            $this->db->query("SET NAMES 'utf8'");
+
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    /**
+    * Method will return specified row from DB
+    * @method fetchRow
+    * @param integer $row = row ID
+    * @return mixed
+    */
+    public function fetchRow( $row ){
+        $out = array();
+
+        try{
+            $select = $this->db->select();
+            $select
+                ->from('%pTableName%')
+                ->where('%pTableName%.%pTableIndexCell% = ?', $row )
+                ->limit(1);
+
+            $result = $select->query();
+            $fetch = $result->fetch(PDO::FETCH_ASSOC);
+
+            if( $fetch ){
+                $out = $fetch;
+            }
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return $out;
+    }
+
+    /**
+    * Method will return all Db fields
+    * @method fetchAll
+    * @param integer $limit = limitation starts from
+    * @param integer $offset = limitation count
+    * @return mixed
+    */
+    public function fetchAll( $limit = 10, $offset = 0 ){
+        $out = array();
+
+        try{
+            $select = $this->db->select();
+            $select
+                ->from('%pTableName%')
+                ->limit($limit, $offset);
+
+            $result = $select->query();
+            $fetch = $result->fetchAll();
+
+            if( $fetch ){
+                $out = $fetch;
+            }
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return $out;
+    }
+
+    /**
+    * Method will perform search in DB for defined criteria
+    * @method fetchAll
+    * @param [%pMapperPrefix%_Entity_Search_%pClassName%] $searchCriteria = array of searchable params
+    * @param integer $limit = limit for list
+    * @param integer $offset = offset for limit
+    * @param array $order = order criteria
+    * @return mixed
+    */
+    public function search( %pMapperPrefix%_Entity_Search_%pClassName% $searchCriteria, $limit = 10, $offset = 0, $order = array('0'=>array('field'=>'%pTableIndexCell%','direction'=>'DESC')) ){
+        //base definition
+        $out = array();
+
+        //Reduce limit
+        if( $limit > $searchCriteria->maxLimit ){
+            $limit = $searchCriteria->maxLimit;
+        }
+
+        //Run
+        try{
+            $select = $this->db->select();
+            $select
+                ->from('%pTableName%')
+                ->limit($limit, $offset);
+
+            if( is_array($order) && count($order) > 0 ){
+                foreach($order as $o ){
+                    if( isset($o['field']) ){
+                        $select
+                            ->order( $o['field'] . (isset($o['direction']) ? ' '.$o['direction'] : '') );
+                    }
+                }
+            }
+
+            foreach($searchCriteria as $k=>$v ){
+                if( $v !== null && $v !== '' ){
+                    if( is_array($v) ){
+                        $select
+                            ->where( $k .' IN (?)', $v );
+                    }
+                    else{
+                        $select
+                            ->where( $k .' LIKE ?', $v );
+                    }
+                }
+            }
+
+            $result = $select->query();
+            $fetch = $result->fetchAll();
+
+            if( $fetch ){
+                $out = $fetch;
+            }
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return $out;
+    }
+
+    /**
+    * Method will insert new row in to DB
+    * @method insert
+    * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to insert
+    * @return mixed
+    */
+    public function insert( %pMapperPrefix%_Entity_%pClassName% $data ){
+        try{
+            return $this->db->insert( '%pTableName%', $data->toArray() )
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+    }
+
+    /**
+    * Method will update row by ID
+    * @method update
+    * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to update
+    * @return mixed
+    */
+    public function update( %pMapperPrefix%_Entity_%pClassName% $data ){
+        try{
+            return $this->db->update( '%pTableName%', $data->toArray(), '%pTableIndexCell% = ' . $data->getId() );
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+    }
+
+    /**
+    * Method will delete specified row
+    * @method delete
+    * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to delete
+    * @return mixed
+    */
+    public function delete( %pMapperPrefix%_Entity_%pClassName% $data ){
+        //Definition
+        try{
+            $where = array('%pTableIndexCell% = ?' => $data->getId() );
+            return $this->db->delete( '%pTableName%', $where );
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+    }
+
+}
