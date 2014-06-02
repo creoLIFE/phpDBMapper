@@ -197,7 +197,7 @@ class %pMapperPrefix%_Dao_%pClassName%
     */
     public function update( %pMapperPrefix%_Entity_%pClassName% $data ){
         try{
-            return $this->db->update( '%pTableName%', $data->toArray(), '%pTableIndexCell% = ' . $data->getId() );
+            return $this->db->update( '%pTableName%', $data->toArray(), '%pTableIndexCell% = ' . $data->get%pTableIndexCellFixed%() );
         }
         catch( exception $e ){
             throw new Exception( $e );
@@ -213,7 +213,7 @@ class %pMapperPrefix%_Dao_%pClassName%
     public function delete( %pMapperPrefix%_Entity_%pClassName% $data ){
         //Definition
         try{
-            $where = array('%pTableIndexCell% = ?' => $data->getId() );
+            $where = array('%pTableIndexCell% = ?' => $data->get%pTableIndexCellFixed%() );
             return $this->db->delete( '%pTableName%', $where );
         }
         catch( exception $e ){

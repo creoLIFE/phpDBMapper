@@ -2,6 +2,23 @@
 
 class Application_Form_Generate extends Zend_Form
 {
+    private $pDbHost;
+    private $pDbName;
+    private $pDbUser;
+    private $pDbPassword;
+    private $pDbTables;
+    private $pDbTableSelected;
+
+    public function __construct($pDbHost = '', $pDbName = '', $pDbUser = '', $pDbPassword = '', $pDbTables = array(), $pDbTableSelected = '' ){
+        $this->pDbHost = $pDbHost;
+        $this->pDbName = $pDbName;
+        $this->pDbUser = $pDbUser;
+        $this->pDbPassword = $pDbPassword;
+        $this->pDbTables = $pDbTables;
+        $this->pDbTableSelected = $pDbTableSelected;
+        parent::__construct();
+    }
+
     public function init()
     {
         $this->setName('phpDBMapper');
@@ -10,30 +27,39 @@ class Application_Form_Generate extends Zend_Form
         $id = new Zend_Form_Element_Hidden('id');
         $id->addFilter('Int');
 
-        $dbName = new Zend_Form_Element_Text('dbname');
-        $dbName->setLabel('Database name')
-               ->setRequired(true)
-               ->addFilter('StripTags')
-               ->addFilter('StringTrim')
-               ->addValidator('NotEmpty');
-
-        $dbUser = new Zend_Form_Element_Text('dbuser');
-        $dbUser->setLabel('Database User name')
-              ->setRequired(true)
+        $dbHost = new Zend_Form_Element_Hidden('dbhost');
+        $dbHost->setRequired(true)
+              ->setValue( $this->pDbHost )
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
               ->addValidator('NotEmpty');
 
-        $dbPassword = new Zend_Form_Element_Password('dbpassword');
-        $dbPassword->setLabel('Database User password')
-              ->setRequired(true)
+        $dbName = new Zend_Form_Element_Hidden('dbname');
+        $dbName->setRequired(true)
+              ->setValue( $this->pDbName )
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
               ->addValidator('NotEmpty');
 
-        $dbTable = new Zend_Form_Element_Text('dbtablename');
+        $dbUser = new Zend_Form_Element_Hidden('dbuser');
+        $dbUser->setRequired(true)
+              ->setValue( $this->pDbUser )
+              ->addFilter('StripTags')
+              ->addFilter('StringTrim')
+              ->addValidator('NotEmpty');
+
+        $dbPassword = new Zend_Form_Element_Hidden('dbpassword');
+        $dbPassword->setRequired(true)
+              ->setValue( $this->pDbPassword )
+              ->addFilter('StripTags')
+              ->addFilter('StringTrim')
+              ->addValidator('NotEmpty');
+
+        $dbTable = new Zend_Form_Element_Select('dbtablename');
         $dbTable->setLabel('Database Table name')
               ->setRequired(true)
+              ->setValue( $this->pDbTableSelected )
+              ->setMultiOptions( $this->pDbTables )
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
               ->addValidator('NotEmpty');
@@ -66,6 +92,6 @@ class Application_Form_Generate extends Zend_Form
         $submit->setLabel('Generate')
               ->setAttrib('id', 'submitbutton');
 
-        $this->addElements(array($id, $dbName, $dbUser, $dbPassword, $dbTable, $sPrefix, $sFolder, $fNote, $fNote1, $submit));
+        $this->addElements(array($id, $dbHost, $dbName, $dbUser, $dbPassword, $dbTable, $sPrefix, $sFolder, $fNote, $fNote1, $submit));
     }
 }

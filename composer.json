@@ -21,11 +21,14 @@
         {
             "type": "git",
             "url": "https://github.com/creoLIFE/phpDBMapper.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/creoLIFE/Zend.git"
         }
     ],
     "require": {
-        "zendframework/zendframework1": "=1.12.6"
-    },
-    "autoload": {
+        "zendframework/zendframework1": "=1.12.6",
+        "creoLIFE/Zend": "dev-master"
     }
 }

@@ -2,32 +2,57 @@
 
 class IndexController extends Zend_Controller_Action
 {
-
     public function indexAction()
     {
         //Initialize
         $dirInput = $this->getInvokeArg('bootstrap')->getOption('dir')['input'];
         $dirOutput = $this->getInvokeArg('bootstrap')->getOption('dir')['output'];
-        $form = new Application_Form_Generate();
-        $params = $this->_request->getParams();
-        $post = $this->_request->getPost();
-        
-        //Run
-        $this->view->form = $form;
+        $params = new Main_Helper_Params( $this->_request->getParams() );
+        $post = new Main_Helper_Params( $this->_request->getPost() );
+
+        $form = new Application_Form_Connect();
+
+        $db = Zend_Db::factory('Pdo_Mysql',array(
+            'host'     => $post->getParam('dbhost'),
+            'username' => $post->getParam('dbuser'),
+            'password' => $post->getParam('dbpassword'),
+            'dbname'   => $post->getParam('dbname')
+        ));
 
 
-        if( isset($params['do']) && $params['do'] === 'generate'){
+        if( $params->getParam('do') === 'connect'){
+            try {
+
+                $db->getConnection();
+
+                $tables = $db->listTables();
+
+                $form = new Application_Form_Generate($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'), $tables);
+            } catch (Zend_Db_Adapter_Exception $e) {
+                print_r($e);
+                $form = new Application_Form_Connect($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'));
+            } catch (Zend_Exception $e) {
+                print_r($e);
+                $form = new Application_Form_Connect($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'));
+            }
+        }
+
+        if( $params->getParam('do') === 'generate'){
+            $tables = $db->listTables();
+            $form = new Application_Form_Generate($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'), $tables, $post->getParam('dbtablename'));
+
+            $tableInfo = $db->describeTable( $tables[$post->getParam('dbtablename')] );
 
             $elToChange = array(
-                'pMapperPrefix'     => $params['sprefix'],
-                'pTableName'        => 't_clients',
-                'pTableIndexCell'   => 'id',
-                'pClassName'        => 'Clients',
-                'pDate'             => date("Y-m-d H:i:s"),
-                'pYear'             => date("Y")
+                'pMapperPrefix'         => $post->getParam('sprefix',null,'Main'),
+                'pTableName'            => $post->getParam('dbtablename'),
+                'pTableIndexCell'       => self::getTablePrimaryName( $tableInfo ),
+                'pTableIndexCellFixed'  => self::getNameFixed( self::getTablePrimaryName( $tableInfo ) ),
+                'pClassName'            => self::getNameFixed( $tables[$post->getParam('dbtablename')] ),
+                'pDate'                 => date("Y-m-d H:i:s"),
+                'pYear'                 => date("Y")
             );
             
-
             //DAO      
             $dao = file_get_contents( $dirInput . '/dao.template' );
             foreach( $elToChange as $key=>$val ){
@@ -193,6 +218,27 @@ class IndexController extends Zend_Controller_Action
 
         }
 
+
+        //Run
+        $this->view->form = $form;
+
+    }
+
+
+    public function getTablePrimaryName( $tableInfo ){
+        foreach( $tableInfo as $key=>$val ){
+            if( $val['PRIMARY'] == 1 ){
+                return $val['COLUMN_NAME'];
+            }
+        }
+    }
+
+    public function getNameFixed( $toFix ){
+        $el = explode( '_', $toFix);
+        foreach($el as $e){
+            $out[] = ucfirst($e);
+        }
+        return  implode( '', $out);
     }
 
 }
