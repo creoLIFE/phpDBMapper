@@ -43,6 +43,9 @@ class IndexController extends Zend_Controller_Action
 
             $tableInfo = $db->describeTable( $tables[$post->getParam('dbtablename')] );
 
+echo "<pre>";
+print_r($tableInfo);
+
             $elToChange = array(
                 'pMapperPrefix'         => $post->getParam('sprefix',null,'Main'),
                 'pTableName'            => $post->getParam('dbtablename'),
@@ -95,6 +98,8 @@ class IndexController extends Zend_Controller_Action
             preg_match( '/<phpDBMapper:params>(.*)<\/phpDBMapper:params>/s', $entity, $p );
             preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $entity, $m );
 
+            
+            /*
             $columnToChange = array(
                 0 => array(
                     'pColumnName'       => 'id',
@@ -107,10 +112,11 @@ class IndexController extends Zend_Controller_Action
                     'pColumnType'       => 'string',
                 )
             );
+            */
 
             $paramsOut = '';
             $methodsOut = '';
-            foreach( $columnToChange as $c ){
+            foreach( self::getTableRowsInfo($tableInfo) as $c ){
                 $paramsTmp = $p[1];
                 $methodsTmp = $m[1];
 
@@ -141,6 +147,7 @@ class IndexController extends Zend_Controller_Action
             preg_match( '/<phpDBMapper:params>(.*)<\/phpDBMapper:params>/s', $entity, $p );
             preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $entity, $m );
 
+            /*
             $columnToChange = array(
                 0 => array(
                     'pColumnName'       => 'id',
@@ -153,10 +160,11 @@ class IndexController extends Zend_Controller_Action
                     'pColumnType'       => 'string',
                 )
             );
+            */
 
             $paramsOut = '';
             $methodsOut = '';
-            foreach( $columnToChange as $c ){
+            foreach( self::getTableRowsInfo($tableInfo) as $c ){
                 $paramsTmp = $p[1];
                 $methodsTmp = $m[1];
 
@@ -231,6 +239,17 @@ class IndexController extends Zend_Controller_Action
                 return $val['COLUMN_NAME'];
             }
         }
+    }
+
+    public function getTableRowsInfo( $tableInfo ){
+        foreach( $tableInfo as $key=>$val ){
+            $out[] = array(
+                'pColumnName'       => $val['COLUMN_NAME'],
+                'pColumnNameFixed'  => self::getNameFixed( $val['COLUMN_NAME'] ),
+                'pColumnType'       => $val['DATA_TYPE']
+            );
+        }
+        return $out;
     }
 
     public function getNameFixed( $toFix ){
