@@ -43,8 +43,6 @@ class IndexController extends Zend_Controller_Action
 
             $tableInfo = $db->describeTable( $tables[$post->getParam('dbtablename')] );
 
-echo "<pre>";
-print_r($tableInfo);
 
             $elToChange = array(
                 'pMapperPrefix'         => $post->getParam('sprefix',null,'Main'),
@@ -56,6 +54,10 @@ print_r($tableInfo);
                 'pYear'                 => date("Y")
             );
             
+
+
+
+
             //DAO      
             $dao = file_get_contents( $dirInput . '/dao.template' );
             foreach( $elToChange as $key=>$val ){
@@ -65,6 +67,11 @@ print_r($tableInfo);
                 mkdir($dirOutput . '/Dao');
             }
             file_put_contents( $dirOutput . '/Dao/' . $elToChange['pClassName'] . '.php', $dao);
+
+
+
+
+
 
 
             //DAO Interface     
@@ -78,6 +85,11 @@ print_r($tableInfo);
             file_put_contents( $dirOutput . '/Dao/Interface/' . $elToChange['pClassName'] . '.php', $daoInterface);
 
 
+
+
+
+
+
             //Repository
             $repository = file_get_contents( $dirInput . '/repository.template' );
             foreach( $elToChange as $key=>$val ){
@@ -89,6 +101,12 @@ print_r($tableInfo);
             file_put_contents( $dirOutput . '/Repository/' . $elToChange['pClassName'] . '.php', $repository);
 
 
+
+
+
+
+
+
             //Entity
             $entity = file_get_contents( $dirInput . '/entity.template' );
             foreach( $elToChange as $key=>$val ){
@@ -98,21 +116,6 @@ print_r($tableInfo);
             preg_match( '/<phpDBMapper:params>(.*)<\/phpDBMapper:params>/s', $entity, $p );
             preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $entity, $m );
 
-            
-            /*
-            $columnToChange = array(
-                0 => array(
-                    'pColumnName'       => 'id',
-                    'pColumnNameFixed'  => 'Id',
-                    'pColumnType'       => 'integer',
-                ),
-                1 => array(
-                    'pColumnName'       => 'name',
-                    'pColumnNameFixed'  => 'Name',
-                    'pColumnType'       => 'string',
-                )
-            );
-            */
 
             $paramsOut = '';
             $methodsOut = '';
@@ -123,6 +126,20 @@ print_r($tableInfo);
                 foreach( $c as $key=>$val ){
                     $paramsTmp = str_replace( '%'. $key .'%', $val, $paramsTmp );
                     $methodsTmp = str_replace( '%'. $key .'%', $val, $methodsTmp );
+                    switch( $val ){
+                        case 'int':
+                            $methodsTmp = str_replace( '%pValidator%', 'Int', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', '', $methodsTmp );
+                        break;
+                        case 'varchar':
+                            $methodsTmp = str_replace( '%pValidator%', 'Regex', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $methodsTmp );
+                        break;
+                        case 'datetime':
+                            $methodsTmp = str_replace( '%pValidator%', 'Date', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', "array('format' => 'Y-m-d H:m:s.u')", $methodsTmp );
+                        break;
+                    }
                 }
                 
                 $paramsOut .= $paramsTmp;
@@ -138,6 +155,12 @@ print_r($tableInfo);
             file_put_contents( $dirOutput . '/Entity/' . $elToChange['pClassName'] . '.php', $entity);
 
 
+
+
+
+
+
+
             //Entity search
             $entity = file_get_contents( $dirInput . '/entity_search.template' );
             foreach( $elToChange as $key=>$val ){
@@ -147,20 +170,6 @@ print_r($tableInfo);
             preg_match( '/<phpDBMapper:params>(.*)<\/phpDBMapper:params>/s', $entity, $p );
             preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $entity, $m );
 
-            /*
-            $columnToChange = array(
-                0 => array(
-                    'pColumnName'       => 'id',
-                    'pColumnNameFixed'  => 'Id',
-                    'pColumnType'       => 'integer',
-                ),
-                1 => array(
-                    'pColumnName'       => 'name',
-                    'pColumnNameFixed'  => 'Name',
-                    'pColumnType'       => 'string',
-                )
-            );
-            */
 
             $paramsOut = '';
             $methodsOut = '';
@@ -186,6 +195,12 @@ print_r($tableInfo);
             file_put_contents( $dirOutput . '/Entity/Search/' . $elToChange['pClassName'] . '.php', $entity);
 
 
+
+
+
+
+
+
             //Mapper
             $entity = file_get_contents( $dirInput . '/mapper.template' );
             foreach( $elToChange as $key=>$val ){
@@ -194,19 +209,9 @@ print_r($tableInfo);
 
             preg_match( '/<phpDBMapper:map>(.*)<\/phpDBMapper:map>/s', $entity, $m );
 
-            $columnToMap = array(
-                0 => array(
-                    'pMapperKey'        => 'id',
-                    'pMapperValue'      => 'id',
-                ),
-                1 => array(
-                    'pMapperKey'        => 'p_name',
-                    'pMapperValue'      => 'p_name',
-                )
-            );
 
             $mapOut = '';
-            foreach( $columnToMap as $c ){
+            foreach( self::getTableMapper($tableInfo) as $c ){
                 $mapTmp = $m[1];
 
                 foreach( $c as $key=>$val ){
@@ -239,6 +244,16 @@ print_r($tableInfo);
                 return $val['COLUMN_NAME'];
             }
         }
+    }
+
+    public function getTableMapper( $tableInfo ){
+        foreach( $tableInfo as $key=>$val ){
+            $out[] = array(
+                'pMapperKey'       => $val['COLUMN_NAME'],
+                'pMapperValue'     => $val['COLUMN_NAME']
+            );
+        }
+        return $out;
     }
 
     public function getTableRowsInfo( $tableInfo ){

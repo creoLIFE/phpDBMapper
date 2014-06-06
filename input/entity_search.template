@@ -31,7 +31,7 @@ class %pMapperPrefix%_Entity_Search_%pClassName%
     * @return [boolean]
     */
     public function set%pColumnNameFixed%( $%pColumnName% ){
-        $validator = new Zend_Validate_Int();
+        $validator = new Zend_Validate_%pValidator%(%pValidatorPattern%);
         if ($validator->isValid( $%pColumnName% )) {
             $this->%pColumnName% = $%pColumnName%;
             return true;
@@ -46,7 +46,7 @@ class %pMapperPrefix%_Entity_Search_%pClassName%
     * @return [boolean]
     */
     public function get%pColumnNameFixed%(){
-        $validator = new Zend_Validate_Int();
+        $validator = new Zend_Validate_%pValidator%(%pValidatorPattern%);
         if ($validator->isValid( $this->%pColumnName% )) {
             return $this->%pColumnName%;
         } else {
