@@ -5,6 +5,7 @@ class IndexController extends Zend_Controller_Action
     public function indexAction()
     {
         //Initialize
+        $this->view->homePage = true;
         $dirInput = $this->getInvokeArg('bootstrap')->getOption('dir')['input'];
         $dirOutput = $this->getInvokeArg('bootstrap')->getOption('dir')['output'];
         $params = new Main_Helper_Params( $this->_request->getParams() );
@@ -21,6 +22,7 @@ class IndexController extends Zend_Controller_Action
 
 
         if( $params->getParam('do') === 'connect'){
+            $this->view->homePage = false;
             try {
 
                 $db->getConnection();
@@ -38,6 +40,7 @@ class IndexController extends Zend_Controller_Action
         }
 
         if( $params->getParam('do') === 'generate'){
+            $this->view->homePage = false;
             $tables = $db->listTables();
             $form = new Application_Form_Generate($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'), $tables, $post->getParam('dbtablename'));
 
