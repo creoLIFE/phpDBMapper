@@ -6,8 +6,8 @@ class IndexController extends Zend_Controller_Action
     {
         //Initialize
         $this->view->homePage = true;
-        $dirInput = $this->getInvokeArg('bootstrap')->getOption('dir')['input'];
-        $dirOutput = $this->getInvokeArg('bootstrap')->getOption('dir')['output'];
+        $dirInput = realpath( $this->getInvokeArg('bootstrap')->getOption('dir')['input'] );
+        $dirOutput = realpath( $this->getInvokeArg('bootstrap')->getOption('dir')['output'] );
         $params = new Main_Helper_Params( $this->_request->getParams() );
         $post = new Main_Helper_Params( $this->_request->getPost() );
 
@@ -37,6 +37,8 @@ class IndexController extends Zend_Controller_Action
                 print_r($e);
                 $form = new Application_Form_Connect($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'));
             }
+
+            $this->view->status = "Connected";
         }
 
         if( $params->getParam('do') === 'generate'){
@@ -232,8 +234,8 @@ class IndexController extends Zend_Controller_Action
             }
             file_put_contents( $dirOutput . '/Mapper/' . $elToChange['pClassName'] . '.php', $entity);
 
+            $this->view->status = "Stored in to: " . $dirOutput . "</br>";
         }
-
 
         //Run
         $this->view->form = $form;
