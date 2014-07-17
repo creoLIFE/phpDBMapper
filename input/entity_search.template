@@ -13,7 +13,7 @@
 */
 defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
 
-class %pMapperPrefix%_Entity_Search_%pClassName%
+class %pMapperPrefix%_Entity_Search_%pClassName% extends Zf_Orm_Entity
 {
 
     <phpDBMapper:params>

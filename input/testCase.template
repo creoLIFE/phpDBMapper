@@ -1,7 +1,7 @@
 <?php
 /**
- * Repository definition for %pClassName%
- * @package %pMapperPrefix%_Entity
+ * PHPUnit test case for %pClassName%
+ * @package %pMapperPrefix%_Unittest
  * @author Mirek Ratman
  * @version 1.0
  * @since %pDate%
@@ -13,40 +13,25 @@
 */
 defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
 
-class %pMapperPrefix%_Entity_%pClassName% extends Zf_Orm_Entity
+class %pMapperPrefix%_Unittest_%pClassName% extends PHPUnit_Framework_TestCase
 {
 
-    <phpDBMapper:params>
     /**
-     * @var $%pColumnName%
-     */
-    public $%pColumnName%;
-    </phpDBMapper:params>
-
-    <phpDBMapper:methods>
-    /**
-    * Method will set parameter using delivered varible
-    * @method set%pColumnNameFixed%
-    * @param [%pColumnType%] $%pColumnName% = data to save
-    * @return [boolean]
+    * Class constructor
+    * @method __construct
     */
-    public function set%pColumnNameFixed%( $%pColumnName% ){
-        $validator = new Zend_Validate_%pValidator%(%pValidatorPattern%);
-        if ($validator->isValid( $%pColumnName% )) {
-            $this->%pColumnName% = $%pColumnName%;
-            return true;
-        } else {
-            return false;
-        }
+    public function __construct(){
+        self::basicTest();
     }
 
     /**
-    * Method will get saved parameter
-    * @method get%pColumnNameFixed%
-    * @return [boolean]
+    * Test Method
+    * @method basicTest
+    * @return boolean
     */
-    public function get%pColumnNameFixed%(){
-        return $this->%pColumnName%;
+    public function basicTest(){
+        $out = false;
+
+        return $out;
     }
-    </phpDBMapper:methods>
 }

@@ -182,7 +182,7 @@ class %pMapperPrefix%_Dao_%pClassName%
     */
     public function insert( %pMapperPrefix%_Entity_%pClassName% $data ){
         try{
-            return $this->db->insert( '%pTableName%', $data->toArray() )
+            return $this->db->insert( '%pTableName%', $data->toArray() );
         }
         catch( exception $e ){
             throw new Exception( $e );

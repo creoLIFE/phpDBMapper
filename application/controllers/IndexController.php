@@ -28,8 +28,15 @@ class IndexController extends Zend_Controller_Action
                 $db->getConnection();
 
                 $tables = $db->listTables();
-
-                $form = new Application_Form_Generate($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'), $tables);
+                $form = new Application_Form_Generate(
+                    $post->getParam('dbhost'),
+                    $post->getParam('dbname'),
+                    $post->getParam('dbuser'),
+                    $post->getParam('dbpassword'),
+                    $post->getParam('sprefix') !== '' ? $post->getParam('sprefix') : 'Main',
+                    $post->getParam('sfolder') !== '' ? $post->getParam('sfolder') : 'Library',
+                    $tables
+                );
             } catch (Zend_Db_Adapter_Exception $e) {
                 print_r($e);
                 $form = new Application_Form_Connect($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'));
@@ -42,16 +49,32 @@ class IndexController extends Zend_Controller_Action
         }
 
         if( $params->getParam('do') === 'generate'){
+
             $this->view->homePage = false;
             $tables = $db->listTables();
-            $form = new Application_Form_Generate($post->getParam('dbhost'),$post->getParam('dbname'),$post->getParam('dbuser'),$post->getParam('dbpassword'), $tables, $post->getParam('dbtablename'));
+            $form = new Application_Form_Generate(
+                    $post->getParam('dbhost'),
+                    $post->getParam('dbname'),
+                    $post->getParam('dbuser'),
+                    $post->getParam('dbpassword'),
+                    $post->getParam('sprefix') !== '' ? $post->getParam('sprefix') : 'Main',
+                    $post->getParam('sfolder') !== '' ? $post->getParam('sfolder') : 'Library',
+                    $tables,
+                    $post->getParam('dbtablename')
+            );
 
             $tableInfo = $db->describeTable( $tables[$post->getParam('dbtablename')] );
 
+            $elApp = array(
+                "name"       => "Generator: phpDBMapper",
+                "ver"        => "v.0.1b",
+                "github"     => "https://github.com/creoLIFE/phpDBMapper"
+            );
 
             $elToChange = array(
+                'pDbConfig'             => strtolower( $post->getParam('sprefix',null,'Main') ),
                 'pMapperPrefix'         => $post->getParam('sprefix',null,'Main'),
-                'pTableName'            => $post->getParam('dbtablename'),
+                'pTableName'            => $tables[$post->getParam('dbtablename')],
                 'pTableIndexCell'       => self::getTablePrimaryName( $tableInfo ),
                 'pTableIndexCellFixed'  => self::getNameFixed( self::getTablePrimaryName( $tableInfo ) ),
                 'pClassName'            => self::getNameFixed( $tables[$post->getParam('dbtablename')] ),
@@ -60,14 +83,12 @@ class IndexController extends Zend_Controller_Action
             );
             
 
-
-
-
             //DAO      
             $dao = file_get_contents( $dirInput . '/dao.template' );
             foreach( $elToChange as $key=>$val ){
                 $dao = str_replace( '%'. $key .'%', $val, $dao );
             }
+            $dao = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $dao );
             if( !is_dir($dirOutput . '/Dao') ) {
                 mkdir($dirOutput . '/Dao');
             }
@@ -84,6 +105,7 @@ class IndexController extends Zend_Controller_Action
             foreach( $elToChange as $key=>$val ){
                 $daoInterface = str_replace( '%'. $key .'%', $val, $daoInterface );
             }
+            $daoInterface = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $daoInterface );
             if( !is_dir($dirOutput . '/Dao/Interface') ) {
                 mkdir($dirOutput . '/Dao/Interface');
             }
@@ -100,6 +122,46 @@ class IndexController extends Zend_Controller_Action
             foreach( $elToChange as $key=>$val ){
                 $repository = str_replace( '%'. $key .'%', $val, $repository );
             }
+
+            preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $repository, $m );
+
+            $paramsOut = '';
+            $methodsOut = '';
+            foreach( self::getTableRowsInfo($tableInfo) as $c ){
+                $methodsTmp = $m[1];
+
+                foreach( $c as $key=>$val ){
+                    $methodsTmp = str_replace( '%'. $key .'%', $val, $methodsTmp );
+                    switch( $val ){
+                        case 'int':
+                            $methodsTmp = str_replace( '%pValidator%', 'Int', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', '', $methodsTmp );
+                        break;
+                        case 'text':
+                            $methodsTmp = str_replace( '%pValidator%', 'Regex', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $methodsTmp );
+                        break;
+                        case 'varchar':
+                            $methodsTmp = str_replace( '%pValidator%', 'Regex', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $methodsTmp );
+                        break;
+                        case 'datetime':
+                            $methodsTmp = str_replace( '%pValidator%', 'Date', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', "array('format' => 'Y-m-d H:m:s.u')", $methodsTmp );
+                        break;
+                        case 'longtext':
+                            $methodsTmp = str_replace( '%pValidator%', 'Regex', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $methodsTmp );
+                        break;
+                    }
+                }
+                
+                $methodsOut .= $methodsTmp;
+            }
+      
+            $repository = preg_replace( '/<phpDBMapper:methods[^>]*?>.*?<\/phpDBMapper:methods>/is', $methodsOut, $repository );
+
+            $repository = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $repository );
             if( !is_dir($dirOutput . '/Repository') ) {
                 mkdir($dirOutput . '/Repository');
             }
@@ -136,6 +198,10 @@ class IndexController extends Zend_Controller_Action
                             $methodsTmp = str_replace( '%pValidator%', 'Int', $methodsTmp );
                             $methodsTmp = str_replace( '%pValidatorPattern%', '', $methodsTmp );
                         break;
+                        case 'text':
+                            $methodsTmp = str_replace( '%pValidator%', 'Regex', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $methodsTmp );
+                        break;
                         case 'varchar':
                             $methodsTmp = str_replace( '%pValidator%', 'Regex', $methodsTmp );
                             $methodsTmp = str_replace( '%pValidatorPattern%', "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $methodsTmp );
@@ -143,6 +209,10 @@ class IndexController extends Zend_Controller_Action
                         case 'datetime':
                             $methodsTmp = str_replace( '%pValidator%', 'Date', $methodsTmp );
                             $methodsTmp = str_replace( '%pValidatorPattern%', "array('format' => 'Y-m-d H:m:s.u')", $methodsTmp );
+                        break;
+                        case 'longtext':
+                            $methodsTmp = str_replace( '%pValidator%', 'Regex', $methodsTmp );
+                            $methodsTmp = str_replace( '%pValidatorPattern%', "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $methodsTmp );
                         break;
                     }
                 }
@@ -154,6 +224,7 @@ class IndexController extends Zend_Controller_Action
             $entity = preg_replace( '/<phpDBMapper:params[^>]*?>.*?<\/phpDBMapper:params>/is', $paramsOut, $entity );
             $entity = preg_replace( '/<phpDBMapper:methods[^>]*?>.*?<\/phpDBMapper:methods>/is', $methodsOut, $entity );
 
+            $entity = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $entity );
             if( !is_dir($dirOutput . '/Entity') ) {
                 mkdir($dirOutput . '/Entity');
             }
@@ -167,13 +238,13 @@ class IndexController extends Zend_Controller_Action
 
 
             //Entity search
-            $entity = file_get_contents( $dirInput . '/entity_search.template' );
+            $entitysearch = file_get_contents( $dirInput . '/entity_search.template' );
             foreach( $elToChange as $key=>$val ){
-                $entity = str_replace( '%'. $key .'%', $val, $entity );
+                $entitysearch = str_replace( '%'. $key .'%', $val, $entitysearch );
             }
 
-            preg_match( '/<phpDBMapper:params>(.*)<\/phpDBMapper:params>/s', $entity, $p );
-            preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $entity, $m );
+            preg_match( '/<phpDBMapper:params>(.*)<\/phpDBMapper:params>/s', $entitysearch, $p );
+            preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $entitysearch, $m );
 
 
             $paramsOut = '';
@@ -191,13 +262,15 @@ class IndexController extends Zend_Controller_Action
                 $methodsOut .= $methodsTmp;
             }
       
-            $entity = preg_replace( '/<phpDBMapper:params[^>]*?>.*?<\/phpDBMapper:params>/is', $paramsOut, $entity );
-            $entity = preg_replace( '/<phpDBMapper:methods[^>]*?>.*?<\/phpDBMapper:methods>/is', $methodsOut, $entity );
+            $entitysearch = preg_replace( '/<phpDBMapper:params[^>]*?>.*?<\/phpDBMapper:params>/is', $paramsOut, $entitysearch );
+            $entitysearch = preg_replace( '/<phpDBMapper:methods[^>]*?>.*?<\/phpDBMapper:methods>/is', $methodsOut, $entitysearch );
+
+            $entitysearch = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $entitysearch );
 
             if( !is_dir($dirOutput . '/Entity/Search/') ) {
                 mkdir($dirOutput . '/Entity/Search/');
             }
-            file_put_contents( $dirOutput . '/Entity/Search/' . $elToChange['pClassName'] . '.php', $entity);
+            file_put_contents( $dirOutput . '/Entity/Search/' . $elToChange['pClassName'] . '.php', $entitysearch);
 
 
 
@@ -207,12 +280,12 @@ class IndexController extends Zend_Controller_Action
 
 
             //Mapper
-            $entity = file_get_contents( $dirInput . '/mapper.template' );
+            $mapper = file_get_contents( $dirInput . '/mapper.template' );
             foreach( $elToChange as $key=>$val ){
-                $entity = str_replace( '%'. $key .'%', $val, $entity );
+                $mapper = str_replace( '%'. $key .'%', $val, $mapper );
             }
 
-            preg_match( '/<phpDBMapper:map>(.*)<\/phpDBMapper:map>/s', $entity, $m );
+            preg_match( '/<phpDBMapper:map>(.*)<\/phpDBMapper:map>/s', $mapper, $m );
 
 
             $mapOut = '';
@@ -227,12 +300,14 @@ class IndexController extends Zend_Controller_Action
                 $mapOut .= $mapTmp . "\n";
             }
 
-            $entity = preg_replace( '/<phpDBMapper:map[^>]*?>.*?<\/phpDBMapper:map>/is', $mapOut, $entity );
+            $mapper = preg_replace( '/<phpDBMapper:map[^>]*?>.*?<\/phpDBMapper:map>/is', $mapOut, $mapper );
+
+            $mapper = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $mapper );
 
             if( !is_dir($dirOutput . '/Mapper/') ) {
                 mkdir($dirOutput . '/Mapper/');
             }
-            file_put_contents( $dirOutput . '/Mapper/' . $elToChange['pClassName'] . '.php', $entity);
+            file_put_contents( $dirOutput . '/Mapper/' . $elToChange['pClassName'] . '.php', $mapper);
 
             $this->view->status = "Stored in to: " . $dirOutput . "</br>";
         }

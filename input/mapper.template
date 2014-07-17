@@ -15,6 +15,10 @@ defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
 
 class %pMapperPrefix%_Mapper_%pClassName% extends Zf_Orm_DataMapper
 {
+    /**
+    * Class constructor
+    * @method __construct
+    */
     public function __construct()
     {
         $this->setMap(

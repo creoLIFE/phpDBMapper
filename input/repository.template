@@ -17,6 +17,21 @@ class %pMapperPrefix%_Repository_%pClassName%
 {
     private $dao;
 
+    private $dbConfig;
+
+    /**
+    * Class constructor
+    * @method __construct
+    */
+    public function __construct(){
+        //Set defaults
+        $config = Zend_Registry::get('config');
+        
+        if( isset($config->database->%pDbConfig%) ){
+            $this->dbConfig = $config->database->%pDbConfig%;
+        }
+    }
+
     /**
     * Method will set DAO
     * @method setDao
@@ -33,29 +48,33 @@ class %pMapperPrefix%_Repository_%pClassName%
     */
     public function getDao(){
         if (null === $this->dao) {
-            $this->setDao( new %pMapperPrefix%_Dao_%pClassName% );
+            $this->setDao( new %pMapperPrefix%_Dao_%pClassName%( $this->dbConfig ) );
         }
         return $this->dao;
     }
 
+    <phpDBMapper:methods>
     /**
-    * Method will get row by its ID
-    * @method getById
-    * @param integer $id = id of the row
-    * @return boolean
+    * Method will get row 
+    * @method get%pColumnNameFixed%
+    * @param [%pColumnType%] $%pColumnName% = parameter to search in DB
+    * @return mixed
     */
-    public function getById( $id = -1 ){
+    public function get%pColumnNameFixed%( $%pColumnName% ){
         //Definition
         $row = array();
         $mapper = new %pMapperPrefix%_Mapper_%pClassName%();
 
-        $validator = new Zend_Validate_Regex(array('pattern' => '/[a-zA-Z0-9\s\-\_]+/'));
-        if ($validator->isValid( $id )) {
-            $row = $this->getDao()->fetchRow($id);
+        $validator = new Zend_Validate_%pValidator%(%pValidatorPattern%);
+        if ($validator->isValid( $%pColumnName% )) {
+            $row = $this->getDao()->fetchRow( $%pColumnName% );
         }
 
-        $user = $mapper->assign(new %pMapperPrefix%_Entity_%pClassName%(), $row);
+        $result = $mapper->assign(new %pMapperPrefix%_Entity_%pClassName%(), $row);
 
-        return $user;
+        return $result;
     }
+    </phpDBMapper:methods>
+
+
 }

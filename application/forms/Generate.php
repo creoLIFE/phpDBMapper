@@ -6,14 +6,18 @@ class Application_Form_Generate extends Zend_Form
     private $pDbName;
     private $pDbUser;
     private $pDbPassword;
+    private $pPrefix;
+    private $pFolder;
     private $pDbTables;
     private $pDbTableSelected;
 
-    public function __construct($pDbHost = '', $pDbName = '', $pDbUser = '', $pDbPassword = '', $pDbTables = array(), $pDbTableSelected = '' ){
+    public function __construct($pDbHost = '', $pDbName = '', $pDbUser = '', $pDbPassword = '', $pPrefix = 'Main', $pFolder = 'Library', $pDbTables = array(), $pDbTableSelected = '' ){
         $this->pDbHost = $pDbHost;
         $this->pDbName = $pDbName;
         $this->pDbUser = $pDbUser;
         $this->pDbPassword = $pDbPassword;
+        $this->pPrefix = $pPrefix;
+        $this->pFolder = $pFolder;
         $this->pDbTables = $pDbTables;
         $this->pDbTableSelected = $pDbTableSelected;
         parent::__construct();
@@ -69,7 +73,7 @@ class Application_Form_Generate extends Zend_Form
               ->setRequired(true)
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
-              ->setValue('Main')
+              ->setValue($this->pPrefix)
               ->addValidator('NotEmpty');
 
         $sFolder = new Zend_Form_Element_Text('sfolder');
@@ -77,7 +81,7 @@ class Application_Form_Generate extends Zend_Form
               ->setRequired(true)
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
-              ->setValue('Library')
+              ->setValue($this->pFolder)
               ->addValidator('NotEmpty');
 
         $fNote = new Zend_Form_Element_Note('note');
