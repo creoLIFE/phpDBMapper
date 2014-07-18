@@ -84,6 +84,35 @@ class %pMapperPrefix%_Dao_%pClassName%
     }
 
     /**
+    * Method will return specified row from DB
+    * @method fetchRow
+    * @param string $column = column to check
+    * @param string $value = value to check
+    * @return boolean
+    */
+    public function exists( $column, $value ){
+        try{
+            $select = $this->db->select();
+            $select
+                ->from('%pTableName%')
+                ->where( $column . ' = ?', $value )
+                ->limit(1);
+
+            $result = $select->query();
+            $fetch = $result->fetchColumn();
+
+            if( (boolean)$fetch === false ){
+                return false;
+            }
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return false;
+    }
+
+    /**
     * Method will return all Db fields
     * @method fetchAll
     * @param integer $limit = limitation starts from

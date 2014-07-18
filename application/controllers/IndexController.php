@@ -118,12 +118,12 @@ class IndexController extends Zend_Controller_Action
 
 
             //Repository
-            $repository = file_get_contents( $dirInput . '/repository.template' );
+            $repositoryBase = file_get_contents( $dirInput . '/repository_base.template' );
             foreach( $elToChange as $key=>$val ){
-                $repository = str_replace( '%'. $key .'%', $val, $repository );
+                $repositoryBase = str_replace( '%'. $key .'%', $val, $repositoryBase );
             }
 
-            preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $repository, $m );
+            preg_match( '/<phpDBMapper:methods>(.*)<\/phpDBMapper:methods>/s', $repositoryBase, $m );
 
             $paramsOut = '';
             $methodsOut = '';
@@ -159,15 +159,30 @@ class IndexController extends Zend_Controller_Action
                 $methodsOut .= $methodsTmp;
             }
       
-            $repository = preg_replace( '/<phpDBMapper:methods[^>]*?>.*?<\/phpDBMapper:methods>/is', $methodsOut, $repository );
+            $repositoryBase = preg_replace( '/<phpDBMapper:methods[^>]*?>.*?<\/phpDBMapper:methods>/is', $methodsOut, $repositoryBase );
 
-            $repository = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $repository );
+            $repositoryBase = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $repositoryBase );
+            if( !is_dir($dirOutput . '/Repository/Base') ) {
+                mkdir($dirOutput . '/Repository/Base');
+            }
+            file_put_contents( $dirOutput . '/Repository/Base/' . $elToChange['pClassName'] . '.php', $repositoryBase);
+
+
+
+
+
+
+
+            //User temp repository
+            $userRepository = file_get_contents( $dirInput . '/repository_temp.template' );
+            foreach( $elToChange as $key=>$val ){
+                $userRepository = str_replace( '%'. $key .'%', $val, $userRepository );
+            }
+            $userRepository = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $userRepository );
             if( !is_dir($dirOutput . '/Repository') ) {
                 mkdir($dirOutput . '/Repository');
             }
-            file_put_contents( $dirOutput . '/Repository/' . $elToChange['pClassName'] . '.php', $repository);
-
-
+            file_put_contents( $dirOutput . '/Repository/' . $elToChange['pClassName'] . '_REMOVE_THIS_TEXT.php', $userRepository);
 
 
 

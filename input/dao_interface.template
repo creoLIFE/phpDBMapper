@@ -20,12 +20,22 @@ interface %pMapperPrefix%_Dao_Interface_%pClassName%
     /**
     * @method fetchRow
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with row data
+    * @return mixed
     */
     public function fetchRow( $id );
 
     /**
+    * @method exists
+    * @param string $column = column to check
+    * @param string $value = value to check
+    * @return boolean
+    */
+    public function exists( $column, $value );
+
+    /**
     * @method fetchAll
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with all rows data
+    * @return mixed
     */
     public function fetchAll( $limit = 10, $offset = 0 );
 
@@ -42,18 +52,22 @@ interface %pMapperPrefix%_Dao_Interface_%pClassName%
     /**
     * @method insert
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to insert
+    * @return mixed
     */
     public function insert( %pMapperPrefix%_Entity_%pClassName% $data );
 
     /**
     * @method update
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to update
+    * @return mixed
     */
     public function update( %pMapperPrefix%_Entity_%pClassName% $data );
 
     /**
     * @method delete
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to delete
+    * @return mixed
     */
     public function delete( %pMapperPrefix%_Entity_%pClassName% $data );
+
 }

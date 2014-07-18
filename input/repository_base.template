@@ -13,7 +13,7 @@
 */
 defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
 
-class %pMapperPrefix%_Repository_%pClassName%
+class %pMapperPrefix%_Repository_Base_%pClassName%
 {
     private $dao;
 
@@ -23,12 +23,17 @@ class %pMapperPrefix%_Repository_%pClassName%
     * Class constructor
     * @method __construct
     */
-    public function __construct(){
+    public function __construct( $dbConfig = false ){
         //Set defaults
         $config = Zend_Registry::get('config');
         
         if( isset($config->database->%pDbConfig%) ){
             $this->dbConfig = $config->database->%pDbConfig%;
+        }
+        else{
+            if( $dbConfig ){
+                $this->dbConfig = $dbConfig;
+            }
         }
     }
 
@@ -62,7 +67,7 @@ class %pMapperPrefix%_Repository_%pClassName%
     */
     public function get%pColumnNameFixed%( $%pColumnName% ){
         //Definition
-        $row = array();
+        $result = array();
         $mapper = new %pMapperPrefix%_Mapper_%pClassName%();
 
         $validator = new Zend_Validate_%pValidator%(%pValidatorPattern%);
@@ -71,6 +76,24 @@ class %pMapperPrefix%_Repository_%pClassName%
         }
 
         $result = $mapper->assign(new %pMapperPrefix%_Entity_%pClassName%(), $row);
+
+        return $result;
+    }
+
+    /**
+    * Method will check if element in %pColumnNameFixed% exists 
+    * @method check%pColumnNameFixed%Exists
+    * @param [%pColumnType%] $value = parameter to check if exists in DB
+    * @return mixed
+    */
+    public function check%pColumnNameFixed%Exists( $value ){
+        //Definition
+        $result = true;
+
+        $validator = new Zend_Validate_%pValidator%(%pValidatorPattern%);
+        if ($validator->isValid( $value )) {
+            $result = $this->getDao()->exists( '%pColumnName%', $value );
+        }
 
         return $result;
     }
