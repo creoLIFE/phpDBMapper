@@ -18,6 +18,12 @@ interface %pMapperPrefix%_Dao_Interface_%pClassName%
 {
 
     /**
+    * @method getMetadata
+    * @return array
+    */
+    public function getMetadata();
+
+    /**
     * @method fetchRow
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with row data
     * @return mixed

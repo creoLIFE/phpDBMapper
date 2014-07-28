@@ -55,6 +55,25 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Method will return specified row from DB
+    * @method getMetadata
+    * @return array
+    */
+    public function getMetadata(){
+        $out = array();
+
+        try{
+            $metadata = $this->db->describeTable('%pTableName%');
+            $out = $metadata;
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return $out;
+    }
+
+    /**
+    * Method will return specified row from DB
     * @method fetchRow
     * @param integer $row = row ID
     * @return mixed

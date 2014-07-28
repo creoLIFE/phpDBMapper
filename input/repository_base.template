@@ -58,6 +58,26 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
         return $this->dao;
     }
 
+    /**
+    * Method will get table metadata
+    * @method _getMetadata
+    * @param [string] $columnName = name of column
+    * @return array
+    */
+    public function _getMetadata( $columnName = null ){
+        $list = $this->getDao()->getMetadata();
+        if( empty($columnName) ){
+            return $list;
+        }
+        else{
+            foreach( $list as $key=>$val ){
+                if( $columnName === $key ){
+                    return $val;
+                }
+            }
+        }
+    }
+
     <phpDBMapper:methods>
     /**
     * Method will get row 
