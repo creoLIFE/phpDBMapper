@@ -17,7 +17,6 @@ class %pMapperPrefix%_Mapper_%pClassName% extends Zf_Orm_DataMapper
 {
     /**
     * Class constructor
-    * @method __construct
     */
     public function __construct()
     {

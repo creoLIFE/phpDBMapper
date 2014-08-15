@@ -18,7 +18,6 @@ class %pMapperPrefix%_Unittest_%pClassName% extends PHPUnit_Framework_TestCase
 
     /**
     * Class constructor
-    * @method __construct
     */
     public function __construct(){
         self::basicTest();
@@ -26,7 +25,6 @@ class %pMapperPrefix%_Unittest_%pClassName% extends PHPUnit_Framework_TestCase
 
     /**
     * Test Method
-    * @method basicTest
     * @return boolean
     */
     public function basicTest(){

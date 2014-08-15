@@ -17,7 +17,6 @@ class %pMapperPrefix%_Repository_%pClassName% extends %pMapperPrefix%_Repository
 {
     /**
     * Class constructor
-    * @method __construct
     */
     public function __construct(){
         //Set defaults

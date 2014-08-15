@@ -25,8 +25,7 @@ class %pMapperPrefix%_Entity_%pClassName% extends Zf_Orm_Entity
 
     <phpDBMapper:methods>
     /**
-    * Method will set parameter using delivered varible
-    * @method set%pColumnNameFixed%
+    * Method will set parameter using delivered varible and validate it
     * @param [%pColumnType%] $%pColumnName% = data to save
     * @return [boolean]
     */
@@ -42,7 +41,6 @@ class %pMapperPrefix%_Entity_%pClassName% extends Zf_Orm_Entity
 
     /**
     * Method will get saved parameter
-    * @method get%pColumnNameFixed%
     * @return [boolean]
     */
     public function get%pColumnNameFixed%(){

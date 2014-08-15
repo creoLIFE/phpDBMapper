@@ -65,6 +65,16 @@ class IndexController extends Zend_Controller_Action
 
             $tableInfo = $db->describeTable( $tables[$post->getParam('dbtablename')] );
 
+
+
+
+            $sprefix = $post->getParam('sprefix') !== '' ? '/' . $post->getParam('sprefix') : '/Library';
+            if( !is_dir($dirOutput . $sprefix) ) {
+                mkdir($dirOutput . $sprefix);
+            }
+            $dirOutput = $dirOutput . $sprefix;
+
+
             $elApp = array(
                 "name"       => "Generator: phpDBMapper",
                 "ver"        => "v.0.1b",
@@ -111,6 +121,20 @@ class IndexController extends Zend_Controller_Action
             }
             file_put_contents( $dirOutput . '/Dao/Interface/' . $elToChange['pClassName'] . '.php', $daoInterface);
 
+
+
+
+
+            //User temp repository
+            $userRepository = file_get_contents( $dirInput . '/repository_temp.template' );
+            foreach( $elToChange as $key=>$val ){
+                $userRepository = str_replace( '%'. $key .'%', $val, $userRepository );
+            }
+            $userRepository = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $userRepository );
+            if( !is_dir($dirOutput . '/Repository') ) {
+                mkdir($dirOutput . '/Repository');
+            }
+            file_put_contents( $dirOutput . '/Repository/' . $elToChange['pClassName'] . '_REMOVE_THIS_TEXT.php', $userRepository);
 
 
 
@@ -168,21 +192,6 @@ class IndexController extends Zend_Controller_Action
             file_put_contents( $dirOutput . '/Repository/Base/' . $elToChange['pClassName'] . '.php', $repositoryBase);
 
 
-
-
-
-
-
-            //User temp repository
-            $userRepository = file_get_contents( $dirInput . '/repository_temp.template' );
-            foreach( $elToChange as $key=>$val ){
-                $userRepository = str_replace( '%'. $key .'%', $val, $userRepository );
-            }
-            $userRepository = str_replace( '<?php', "<?php\n\n/*" . implode($elApp,', ') . "*/\n", $userRepository );
-            if( !is_dir($dirOutput . '/Repository') ) {
-                mkdir($dirOutput . '/Repository');
-            }
-            file_put_contents( $dirOutput . '/Repository/' . $elToChange['pClassName'] . '_REMOVE_THIS_TEXT.php', $userRepository);
 
 
 

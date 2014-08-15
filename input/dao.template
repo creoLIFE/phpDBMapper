@@ -22,7 +22,6 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Class constructor
-    * @method __construct
     * @param string $dbDefinition = definition name for db access in config
     * @return boolean
     */
@@ -55,7 +54,6 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Method will return specified row from DB
-    * @method getMetadata
     * @return array
     */
     public function getMetadata(){
@@ -74,7 +72,6 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Method will return specified row from DB
-    * @method fetchRow
     * @param integer $row = row ID
     * @return mixed
     */
@@ -103,8 +100,7 @@ class %pMapperPrefix%_Dao_%pClassName%
     }
 
     /**
-    * Method will return specified row from DB
-    * @method fetchRow
+    * Method will check if element exists
     * @param string $column = column to check
     * @param string $value = value to check
     * @return boolean
@@ -133,7 +129,6 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Method will return all Db fields
-    * @method fetchAll
     * @param integer $limit = limitation starts from
     * @param integer $offset = limitation count
     * @return mixed
@@ -163,7 +158,6 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Method will perform search in DB for defined criteria
-    * @method fetchAll
     * @param [%pMapperPrefix%_Entity_Search_%pClassName%] $searchCriteria = array of searchable params
     * @param integer $limit = limit for list
     * @param integer $offset = offset for limit
@@ -224,7 +218,6 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Method will insert new row in to DB
-    * @method insert
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to insert
     * @return mixed
     */
@@ -239,7 +232,6 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Method will update row by ID
-    * @method update
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to update
     * @return mixed
     */
@@ -254,7 +246,6 @@ class %pMapperPrefix%_Dao_%pClassName%
 
     /**
     * Method will delete specified row
-    * @method delete
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to delete
     * @return mixed
     */

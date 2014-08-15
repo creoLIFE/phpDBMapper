@@ -21,7 +21,6 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
 
     /**
     * Class constructor
-    * @method __construct
     */
     public function __construct( $dbConfig = false ){
         //Set defaults
@@ -39,7 +38,6 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
 
     /**
     * Method will set DAO
-    * @method setDao
     * @return mixed
     */
     public function setDao(%pMapperPrefix%_Dao_%pClassName% $dao){
@@ -48,7 +46,6 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
 
     /**
     * Method will get DAO
-    * @method getDao
     * @return mixed
     */
     public function getDao(){
@@ -60,7 +57,6 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
 
     /**
     * Method will get table metadata
-    * @method _getMetadata
     * @param [string] $columnName = name of column
     * @return array
     */
@@ -81,7 +77,6 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
     <phpDBMapper:methods>
     /**
     * Method will get row 
-    * @method get%pColumnNameFixed%
     * @param [%pColumnType%] $%pColumnName% = parameter to search in DB
     * @return mixed
     */
@@ -102,7 +97,6 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
 
     /**
     * Method will check if element in %pColumnNameFixed% exists 
-    * @method check%pColumnNameFixed%Exists
     * @param [%pColumnType%] $value = parameter to check if exists in DB
     * @return mixed
     */
