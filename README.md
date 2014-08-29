@@ -18,7 +18,7 @@ Instalation
 1. Setup local webserver with MySQL DB
 2. Setup some localdomain (can be localhost)
 2. download latest repo
-3. Initialize composer libraries
+3. Update composer libraries
 4. execute app on your local domain and fill fields to connect to DB
 
 Files will be stored in "/output" directory of app.
