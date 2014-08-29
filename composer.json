@@ -16,8 +16,6 @@
             "role": "Developer"
         }
     ],
-    "minimum-stability": "stable",
-    "prefer-stable": true,
     "repositories": [
         {
             "type": "git",
