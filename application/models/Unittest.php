@@ -1,6 +1,6 @@
 <?php
 /**
- * Entity model
+ * unit test model
  * @package Application_Model
  * @author Mirek Ratman
  * @version 1.0
@@ -12,18 +12,17 @@
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-class Application_Model_Entity extends Application_Model_File
+class Application_Model_Unittest extends Application_Model_File
 {
 
     /**
     * Class constructor
-    * @param [string] $inputFile - ENTITY template file 
-    * @param [string] $outputFile - output ENTITY file 
+    * @param [string] $inputFile - DAO template file 
+    * @param [string] $outputFile - output DAO file 
     * @param [Application_Model_Globalparams] $globalParams - instance of Application_Model_Globalparams with data
-    * @param [mixed] $db - DB instance
     */
-    public function __construct( $inputFile, $outputFile, $globalParams, $db = null ){
-        parent::__construct( $inputFile, $outputFile, $globalParams, $db );
+    public function __construct( $inputFile, $outputFile, $globalParams ){
+        parent::__construct( $inputFile, $outputFile, $globalParams );
     }
 
     /**
@@ -32,8 +31,6 @@ class Application_Model_Entity extends Application_Model_File
     */
     public function create(){
         parent::updateVaribles();
-        parent::updateLoop('phpDBMapper:params');
-        parent::updateLoop('phpDBMapper:methods');
         return parent::save();
     }
 

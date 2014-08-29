@@ -1,19 +1,24 @@
 <?php
 /**
  * DAO definition for %pClassName%
+ * Generator: %appName%
  * @package %pMapperPrefix%_Dao
- * @author Mirek Ratman
- * @version 1.0
+ * @author %appAuthor%
+ * @version %pVersion%
+ * @link %appUrl%
+ * @link %appGithubUrl%
  * @since %pDate%
  * @license The MIT License (MIT)
  * @copyright %pYear% creoLIFE.pl
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ * @uses %pMapperPrefix%_Dao_Interface_%pClassName%
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+**/
+
 defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
 
-class %pMapperPrefix%_Dao_%pClassName%
+class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_%pClassName%
 {
     /**
      * @var $db
@@ -118,6 +123,9 @@ class %pMapperPrefix%_Dao_%pClassName%
 
             if( (boolean)$fetch === false ){
                 return false;
+            }
+            else{
+                return true;
             }
         }
         catch( exception $e ){
@@ -258,6 +266,33 @@ class %pMapperPrefix%_Dao_%pClassName%
         catch( exception $e ){
             throw new Exception( $e );
         }
+    }
+
+    /**
+    * Method will return count of all table elements
+    * @param [string] $column = column name to count
+    * @return int
+    */
+    public function count( $column ){
+        $out = array();
+
+        try{
+            $select = $this->db->select();
+            $select
+                ->from('%pTableName%', 'COUNT('. $column .')');
+
+            $result = $select->query();
+            $fetch = $result->fetch();
+
+            if( $fetch ){
+                $out = $fetch['COUNT('. $column .')'];
+            }
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return $out;
     }
 
 }

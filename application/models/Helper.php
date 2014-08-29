@@ -1,35 +1,32 @@
 <?php
 /**
- * PHPUnit test case for %pClassName%
- * @package %pMapperPrefix%_Unittest
+ * Helpers class
+ * @package Application_Helpers
  * @author Mirek Ratman
  * @version 1.0
- * @since %pDate%
+ * @since 2014-08-29
  * @license The MIT License (MIT)
- * @copyright %pYear% creoLIFE.pl
+ * @copyright 2014 creoLIFE.pl
     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
 
-class %pMapperPrefix%_Unittest_%pClassName% extends PHPUnit_Framework_TestCase
+class Application_Model_Helper
 {
 
     /**
-    * Class constructor
+    * method will fix some string to App standard format
+    * @param [string] $toFix
+    * @return [string]
     */
-    public function __construct(){
-        self::basicTest();
+    public static function getNameFixed( $toFix ){
+        $el = explode( '_', $toFix);
+        foreach($el as $e){
+            $out[] = ucfirst($e);
+        }
+        return  implode( '', $out);
     }
 
-    /**
-    * Test Method
-    * @return boolean
-    */
-    public function basicTest(){
-        $out = false;
 
-        return $out;
-    }
 }

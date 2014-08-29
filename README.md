@@ -1,6 +1,24 @@
 phpDBMapper
 ===========
+version: 1.0.1 beta
 
-ALPHA version - made very quickly and need to be reprogramed ;)
 
-Create class definition for DB access (DAO, entity, repository)
+Small APP which will help to create class definition for DB access (MySQL) for Zend Framework 1.x.
+
+I will create:
+- DAO - for database access and basic operation,
+- Entity - object which will be by DAO methods,
+- Repository - Basic operation on data by DAO,
+- Mapper - DB mapper,
+- Basic Unit tests
+
+
+Instalation
+===========
+1. Setup local webserver with MySQL DB
+2. Setup some localdomain (can be localhost)
+2. download latest repo
+3. Initialize composer libraries
+4. execute app on your local domain and fill fields to connect to DB
+
+Files will be stored in "/output" directory of app.
