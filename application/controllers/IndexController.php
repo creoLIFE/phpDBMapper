@@ -20,7 +20,11 @@ class IndexController extends Zend_Controller_Action
             'dbname'   => $post->getParam('dbname')
         ));
 
+        $pDb = new Application_Model_Db( $db );
+
         if( $params->getParam('do') === 'connect'){
+
+
             $this->view->homePage = false;
             try {
 
@@ -49,7 +53,6 @@ class IndexController extends Zend_Controller_Action
 
         if( $params->getParam('do') === 'generate'){
 
-            $pDb = new Application_Model_Db( $db );
 
             $this->view->homePage = false;
             $tables = $pDb->getTablesList();
