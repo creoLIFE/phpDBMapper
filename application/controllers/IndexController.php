@@ -20,6 +20,8 @@ class IndexController extends Zend_Controller_Action
             'dbname'   => $post->getParam('dbname')
         ));
 
+        $this->view->status = "Not connected";
+
 
 
         if( $params->getParam('do') === 'connect'){
@@ -52,6 +54,8 @@ class IndexController extends Zend_Controller_Action
         }
 
         if( $params->getParam('do') === 'generate'){
+            $pDb = new Application_Model_Db( $db );
+            
             $this->view->homePage = false;
             $tables = $pDb->getTablesList();
             $form = new Application_Form_Generate(

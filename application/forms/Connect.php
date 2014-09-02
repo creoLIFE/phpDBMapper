@@ -18,6 +18,7 @@ class Application_Form_Connect extends Zend_Form
     public function init()
     {
         $this->setName('phpDBMapper');
+        $this->setAttrib('role','form');
         $this->setAction('?do=connect');
 
         $id = new Zend_Form_Element_Hidden('id');
@@ -29,6 +30,7 @@ class Application_Form_Connect extends Zend_Form
                ->setRequired(true)
                ->addFilter('StripTags')
                ->addFilter('StringTrim')
+               ->setAttrib('class', 'form-control')
                ->addValidator('NotEmpty');
 
         $dbName = new Zend_Form_Element_Text('dbname');
@@ -37,6 +39,7 @@ class Application_Form_Connect extends Zend_Form
                ->setRequired(true)
                ->addFilter('StripTags')
                ->addFilter('StringTrim')
+               ->setAttrib('class', 'form-control')
                ->addValidator('NotEmpty');
 
         $dbUser = new Zend_Form_Element_Text('dbuser');
@@ -45,6 +48,7 @@ class Application_Form_Connect extends Zend_Form
               ->setRequired(true)
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
+              ->setAttrib('class', 'form-control')
               ->addValidator('NotEmpty');
 
         $dbPassword = new Zend_Form_Element_Password('dbpassword');
@@ -53,12 +57,14 @@ class Application_Form_Connect extends Zend_Form
               ->setRequired(true)
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
+              ->setAttrib('class', 'form-control')
               ->addValidator('NotEmpty');
 
 
         $submit = new Zend_Form_Element_Submit('submit');
         $submit->setLabel('Connect')
-              ->setAttrib('id', 'submitbutton');
+              ->setAttrib('id', 'submitbutton')
+              ->setAttrib('class', 'btn btn-primary');
 
         $this->addElements(array($id, $dbHost, $dbName, $dbUser, $dbPassword, $submit));
     }
