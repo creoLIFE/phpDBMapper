@@ -92,13 +92,14 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
     * @param [int] $offset - limit offset
     * @return [array]
     */
-    public function _getAll( $limit = 10, $offset = 0 ){
+    public function _getAll( $limit = 10, $offset = 0, $orderBy = '%pTableIndexCell%' ){
         //Definition
         $result = array();
         $mapper = new %pMapperPrefix%_Mapper_%pClassName%();
-
         $validator = new Zend_Validate_Int();
-        if ( $validator->isValid( $limit ) && $validator->isValid( $offset )) {
+        $orderByValidator = new Zend_Validate_Regex(array('pattern' => '/[a-zA-Z0-9_]+/'));
+
+        if ( $validator->isValid( $limit ) && $validator->isValid( $offset ) && $orderByValidator->isValid($orderBy) ) {
             $rows = $this->_getDao()->fetchAll( $limit, $offset );
         }
 

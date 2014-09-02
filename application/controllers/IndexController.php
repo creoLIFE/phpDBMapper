@@ -20,15 +20,15 @@ class IndexController extends Zend_Controller_Action
             'dbname'   => $post->getParam('dbname')
         ));
 
-        $pDb = new Application_Model_Db( $db );
+
 
         if( $params->getParam('do') === 'connect'){
-
+            $pDb = new Application_Model_Db( $db );
 
             $this->view->homePage = false;
             try {
 
-                $db->getConnection();
+                $pDb->getConnection();
 
                 $tables = $pDb->getTablesList();
                 $form = new Application_Form_Generate(
@@ -52,8 +52,6 @@ class IndexController extends Zend_Controller_Action
         }
 
         if( $params->getParam('do') === 'generate'){
-
-
             $this->view->homePage = false;
             $tables = $pDb->getTablesList();
             $form = new Application_Form_Generate(
@@ -77,7 +75,7 @@ class IndexController extends Zend_Controller_Action
             
             $pParams->setpDbConfig( strtolower( $post->getParam('sprefix',null,'Main') ) );
             $pParams->setpMapperPrefix( $post->getParam('sprefix',null,'Main') );
-            $pParams->setpTableName( $post->getParam('dbtablename') );
+            $pParams->setpTableName( $tables[$post->getParam('dbtablename')] );
             $pParams->setpTableIndexCell( $pDb->getTablePrimaryName() );
             $pParams->setpTableIndexCellFixed( Application_Model_Helper::getNameFixed( $pDb->getTablePrimaryName() ) );
             $pParams->setpClassName( Application_Model_Helper::getNameFixed( $tables[$post->getParam('dbtablename')] ) );

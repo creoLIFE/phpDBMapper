@@ -43,7 +43,7 @@ interface %pMapperPrefix%_Dao_Interface_%pClassName%
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with all rows data
     * @return mixed
     */
-    public function fetchAll( $limit = 10, $offset = 0 );
+    public function fetchAll( $limit = 10, $offset = 0, $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC' );
 
     /**
     * @param array $searchCriteria = array of searchable params

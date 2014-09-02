@@ -48,6 +48,13 @@ class Application_Model_Db
     }
     
     /**
+    * method will try to establish DB connection
+    */
+    public function getConnection(){
+        $this->db->getConnection();
+    }
+
+    /**
     * method will get table info
     * @param [string] $tableName
     */

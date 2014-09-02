@@ -39,7 +39,7 @@ class Application_Model_Validator
             case 'tinytext':
             case 'text':
                 $this->content = str_replace( $validatorNameKey, 'Regex', $this->content );
-                $this->content = str_replace( $validatorPatternKey, "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $this->content );
+                $this->content = str_replace( $validatorPatternKey, "array('pattern' => '/[a-zA-Z0-9\s\#\.\,\!\?\-\_]+/')", $this->content );
             break;
             case 'varchar':
                 $this->content = str_replace( $validatorNameKey, 'Regex', $this->content );

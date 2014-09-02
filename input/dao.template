@@ -141,14 +141,15 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     * @param integer $offset = limitation count
     * @return mixed
     */
-    public function fetchAll( $limit = 10, $offset = 0 ){
+    public function fetchAll( $limit = 10, $offset = 0, $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC' ){
         $out = array();
 
         try{
             $select = $this->db->select();
             $select
                 ->from('%pTableName%')
-                ->limit($limit, $offset);
+                ->limit($limit, $offset)
+                ->order( $orderBy, strtoupper($orderDirection) === 'DESC' ? 'DESC' : 'ASC' );
 
             $result = $select->query();
             $fetch = $result->fetchAll();
