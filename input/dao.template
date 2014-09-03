@@ -21,7 +21,7 @@ defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
 class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_%pClassName%
 {
     /**
-     * @var $db
+     * @var [mixed]
      */
     private $db;
 

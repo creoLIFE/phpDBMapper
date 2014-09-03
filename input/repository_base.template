@@ -18,8 +18,15 @@ defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
 
 class %pMapperPrefix%_Repository_Base_%pClassName%
 {
+
+    /**
+     * @var [mixed]
+     */
     private $dao;
 
+    /**
+     * @var [mixed]
+     */
     private $dbConfig;
 
     /**

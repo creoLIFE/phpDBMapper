@@ -22,7 +22,7 @@ class %pMapperPrefix%_Entity_%pClassName% extends Zf_Orm_Entity
 
     <phpDBMapper:params>
     /**
-     * @var $%pColumnName%
+     * @var $%pColumnType%
      */
     public $%pColumnName%;
     </phpDBMapper:params>
