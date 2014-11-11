@@ -30,8 +30,9 @@ class Application_Model_Validator
     */
     public function __construct( $valueType, $content, $validatorNameKey = '%pValidator%', $validatorPatternKey = '%pValidatorPattern%' ){
         $this->content = $content;
-        
+
         switch( strtolower($valueType) ){
+            case 'tinyint':
             case 'int':
                 $this->content = str_replace( $validatorNameKey, 'Int', $this->content );
                 $this->content = str_replace( $validatorPatternKey, "array('pattern' => '/[0-9]+/')", $this->content );
