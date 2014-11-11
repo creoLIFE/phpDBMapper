@@ -83,6 +83,7 @@ class IndexController extends Zend_Controller_Action
             $pParams->setpTableIndexCell( $pDb->getTablePrimaryName() );
             $pParams->setpTableIndexCellFixed( Application_Model_Helper::getNameFixed( $pDb->getTablePrimaryName() ) );
             $pParams->setpClassName( Application_Model_Helper::getNameFixed( $tables[$post->getParam('dbtablename')] ) );
+            //$pParams->setpTableRelation( $pDb->getForeginRelationships() );
 
 
             //Create DAO
@@ -102,7 +103,7 @@ class IndexController extends Zend_Controller_Action
             $entity->create();
 
             //Create User repository
-            $repository = new Application_Model_Repository( $dirInput . '/repository_temp.template', $dirOutput . '/Repository/' . $pParams->pClassName . '.php', $pParams );
+            $repository = new Application_Model_Repository( $dirInput . '/repository_temp.template', $dirOutput . '/Repository/' . $pParams->pClassName . '_EXAMPLE.php', $pParams );
             $repository->create();
 
             //Create User repository base

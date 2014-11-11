@@ -62,6 +62,7 @@ class Application_Model_File extends Main_Io
         $this->template = file_get_contents( $file );
         $this->outputFile = $outputFile;
         $this->globalVars = $globalVars;
+
         if( isset($db) ){
             $this->tableRowsInfo = $db->getTableRowsInfo();
             $this->tableMapper = $db->getTableMapper();

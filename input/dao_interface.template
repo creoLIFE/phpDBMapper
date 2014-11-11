@@ -4,7 +4,7 @@
  * Generator: %appName%
  * @package %pMapperPrefix%_Dao_Interface
  * @author %appAuthor%
- * @version %pVersion%
+ * @version %appVer%
  * @link %appUrl%
  * @link %appGithubUrl%
  * @since %pDate%
@@ -22,41 +22,52 @@ interface %pMapperPrefix%_Dao_Interface_%pClassName%
 {
 
     /**
-    * @return array
+    * @return [array]
     */
     public function getMetadata();
 
     /**
-    * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with row data
-    * @return mixed
+    * @param [integer] $id = ID of element
+    * @return [mixed]
     */
     public function fetchRow( $id );
 
     /**
-    * @param string $column = column to check
-    * @param string $value = value to check
-    * @return boolean
+    * @param [string] $column = column to check
+    * @param [string] $value = value to check
+    * @return [boolean]
     */
     public function exists( $column, $value );
 
     /**
-    * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with all rows data
-    * @return mixed
+    * @param [integer] $limit = limitation starts from
+    * @param [integer] $offset = limitation count
+    * @param [array] $where - array of table cell key/value params for where statament
+    * @param [string] $orderBy - order by given column name
+    * @param [string] $orderDirection - order direction
+    * @return [mixed]
     */
-    public function fetchAll( $limit = 10, $offset = 0, $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC' );
+    public function fetch( $limit, $offset, $where, $orderBy, $orderDirection );
 
     /**
-    * @param array $searchCriteria = array of searchable params
-    * @param integer $limit = limit for list
-    * @param integer $offset = offset for limit
-    * @param array $order = order criteria
-    * @return mixed
+    * @param [string] $orderBy - order by given column name
+    * @param [string] $orderDirection - order direction
+    * @return [mixed]
+    */
+    public function fetchAll( $orderBy, $orderDirection );
+
+    /**
+    * @param [array] $searchCriteria = array of searchable params
+    * @param [integer] $limit = limit for list
+    * @param [integer] $offset = offset for limit
+    * @param [array] $order = order criteria
+    * @return [mixed]
     */
     public function search( %pMapperPrefix%_Entity_Search_%pClassName% $searchCriteria, $limit, $offset, $order);
 
     /**
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to insert
-    * @return mixed
+    * @return [mixed]
     */
     public function insert( %pMapperPrefix%_Entity_%pClassName% $data );
 

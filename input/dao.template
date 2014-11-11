@@ -4,7 +4,7 @@
  * Generator: %appName%
  * @package %pMapperPrefix%_Dao
  * @author %appAuthor%
- * @version %pVersion%
+ * @version %appVer%
  * @link %appUrl%
  * @link %appGithubUrl%
  * @since %pDate%
@@ -27,8 +27,8 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
 
     /**
     * Class constructor
-    * @param string $dbDefinition = definition name for db access in config
-    * @return boolean
+    * @param [string] $dbDefinition = definition name for db access in config
+    * @return [boolean]
     */
     public function __construct( $dbConfig ){
 
@@ -59,7 +59,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
 
     /**
     * Method will return specified row from DB
-    * @return array
+    * @return [array]
     */
     public function getMetadata(){
         $out = array();
@@ -77,8 +77,8 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
 
     /**
     * Method will return specified row from DB
-    * @param integer $row = row ID
-    * @return mixed
+    * @param [integer] $row = row ID
+    * @return [mixed]
     */
     public function fetchRow( $row ){
         $out = array();
@@ -106,9 +106,9 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
 
     /**
     * Method will check if element exists
-    * @param string $column = column to check
-    * @param string $value = value to check
-    * @return boolean
+    * @param [string] $column = column to check
+    * @param [string] $value = value to check
+    * @return [boolean]
     */
     public function exists( $column, $value ){
         try{
@@ -137,12 +137,48 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
 
     /**
     * Method will return all Db fields
-    * @param integer $limit = limitation starts from
-    * @param integer $offset = limitation count
-    * @return mixed
+    * @param [string] $orderBy - order by given column name
+    * @param [string] $orderDirection - order direction
+    * @return [mixed]
     */
-    public function fetchAll( $limit = 10, $offset = 0, $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC' ){
+    public function fetchAll( $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC' ){
         $out = array();
+
+        try{
+            $select = $this->db->select();
+            $select
+                ->from('%pTableName%')
+                ->order( $orderBy, strtoupper($orderDirection) === 'DESC' ? 'DESC' : 'ASC' );
+
+            $result = $select->query();
+            $fetch = $result->fetchAll();
+
+            if( $fetch ){
+                $out = $fetch;
+            }
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return $out;
+    }
+
+
+    /**
+    * Method will return Db fields based on given criteria
+    * @param [integer] $limit = limitation starts from
+    * @param [integer] $offset = limitation count
+    * @param [array] $where - array of table cell key/value params for where statament
+    * @param [string] $orderBy - order by given column name
+    * @param [string] $orderDirection - order direction
+    * @return [mixed]
+    */
+    public function fetch( $limit = 10, $offset = 0, $where = array(), $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC' ){
+        $out = array();
+
+        $limit = $limit < 0 ? 0 : $limit;
+        $offset = $offset < 0 ? 0 : $offset;
 
         try{
             $select = $this->db->select();
@@ -150,6 +186,19 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
                 ->from('%pTableName%')
                 ->limit($limit, $offset)
                 ->order( $orderBy, strtoupper($orderDirection) === 'DESC' ? 'DESC' : 'ASC' );
+
+            if( is_array($where) && count($where) > 0 ){
+                foreach( $where as $w ){
+                    if( isset($w['operator']) ){
+                        $select
+                            ->where( $w['cell'] .' '. (isset($w['operator']) ? $w['operator'] : '') .' (?)', $w['values'] );
+                    }
+                    else{
+                        $select
+                            ->where( $w['cell'] .' IN (?)', $w['values'] );
+                    }
+                }
+            }
 
             $result = $select->query();
             $fetch = $result->fetchAll();
@@ -168,19 +217,17 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     /**
     * Method will perform search in DB for defined criteria
     * @param [%pMapperPrefix%_Entity_Search_%pClassName%] $searchCriteria = array of searchable params
-    * @param integer $limit = limit for list
-    * @param integer $offset = offset for limit
-    * @param array $order = order criteria
-    * @return mixed
+    * @param [integer] $limit = limit for list
+    * @param [integer] $offset = offset for limit
+    * @param [array] $order = order criteria
+    * @return [mixed]
     */
     public function search( %pMapperPrefix%_Entity_Search_%pClassName% $searchCriteria, $limit = 10, $offset = 0, $order = array('0'=>array('field'=>'%pTableIndexCell%','direction'=>'DESC')) ){
         //base definition
         $out = array();
 
-        //Reduce limit
-        if( $limit > $searchCriteria->maxLimit ){
-            $limit = $searchCriteria->maxLimit;
-        }
+        $limit = $limit < 0 ? 0 : $limit;
+        $offset = $offset < 0 ? 0 : $offset;
 
         //Run
         try{
@@ -228,7 +275,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     /**
     * Method will insert new row in to DB
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to insert
-    * @return mixed
+    * @return [mixed]
     */
     public function insert( %pMapperPrefix%_Entity_%pClassName% $data ){
         try{
@@ -242,7 +289,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     /**
     * Method will update row by ID
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to update
-    * @return mixed
+    * @return [mixed]
     */
     public function update( %pMapperPrefix%_Entity_%pClassName% $data ){
         try{
@@ -256,7 +303,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     /**
     * Method will delete specified row
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to delete
-    * @return mixed
+    * @return [mixed]
     */
     public function delete( %pMapperPrefix%_Entity_%pClassName% $data ){
         //Definition
@@ -272,7 +319,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     /**
     * Method will return count of all table elements
     * @param [string] $column = column name to count
-    * @return int
+    * @return [integer]
     */
     public function count( $column ){
         $out = array();

@@ -4,7 +4,7 @@
  * Generator: %appName%
  * @package %pMapperPrefix%_Entity_Search
  * @author %appAuthor%
- * @version %pVersion%
+ * @version %appVer%
  * @link %appUrl%
  * @link %appGithubUrl%
  * @since %pDate%
@@ -24,7 +24,7 @@ class %pMapperPrefix%_Entity_Search_%pClassName% extends Zf_Orm_Entity
     /**
      * @var $%pColumnType%
      */
-    public $%pColumnName%;
+    public $%pColumnName% = false;
     </phpDBMapper:params>
 
     <phpDBMapper:methods>

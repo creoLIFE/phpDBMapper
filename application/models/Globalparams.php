@@ -85,12 +85,22 @@ class Application_Model_Globalparams
     /**
     * @var [string]
     */
+    public $pTableRelation = '';
+
+    /**
+    * @var [string]
+    */
     public $pClassName = '';
 
     /**
     * @var [string]
     */
     public $pDateTime = '';
+
+    /**
+    * @var [string]
+    */
+    public $pDate = '';
 
     /**
     * @var [string]
@@ -121,6 +131,7 @@ class Application_Model_Globalparams
         $this->appGenerated = date("Y-m-d H:i:s");
 
         $this->pDateTime = date("Y-m-d H:i:s");
+        $this->pDate = date("Y-m-d");
         $this->pYear = date("Y");
     }
     
@@ -178,8 +189,23 @@ class Application_Model_Globalparams
     /**
     * @param [string] $str = data to set
     */
+    public function setpTableRelation( $str ){
+        $this->pTableRelation = $str;
+    }
+
+    /**
+    * @param [string] $str = data to set
+    */
     public function setpDateTime( $str ){
         $this->pDateTime = $str;
+    }
+
+
+    /**
+    * @param [string] $str = data to set
+    */
+    public function setpDate( $str ){
+        $this->pDate = $str;
     }
 
     /**

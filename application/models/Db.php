@@ -66,6 +66,31 @@ class Application_Model_Db
     /**
     * method will list all tables in DB
     */
+    public function getForeginRelationships(){
+        $result = $this->db->query("SELECT CONCAT( TABLE_NAME, '.', COLUMN_NAME, '|', REFERENCED_TABLE_NAME, '.', REFERENCED_COLUMN_NAME ) as relation FROM INFORMATION_SCHEMA.key_column_usage WHERE TABLE_NAME = 'campaigns' AND REFERENCED_TABLE_NAME IS NOT NULL ORDER BY TABLE_NAME, COLUMN_NAME");
+        $rows = $result->fetchAll();
+
+        $out = array();
+        foreach( $rows as $r){
+            $rt = explode('|',$r['relation']);
+            $out[$rt[0]] = $rt[1];
+        }
+
+        return $out;
+    }
+
+    /**
+    * method will list all tables in DB
+    */
+    public function getForeginRelationshipsJoins(){
+        $rel = self::getForeginRelationships();
+
+        return '';
+    }
+
+    /**
+    * method will list all tables in DB
+    */
     public function getTablesList(){
         return $this->tableList;
     }

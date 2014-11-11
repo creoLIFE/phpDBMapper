@@ -4,7 +4,7 @@
  * Generator: %appName%
  * @package %pMapperPrefix%_Mapper
  * @author %appAuthor%
- * @version %pVersion%
+ * @version %appVer%
  * @link %appUrl%
  * @link %appGithubUrl%
  * @since %pDate%
