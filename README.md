@@ -1,6 +1,6 @@
 phpDBMapper
 ===========
-version: 1.0.1 beta
+version: 1.0.4 beta
 
 
 Small APP which will help to create class definition for DB access (MySQL) for Zend Framework 1.x.
