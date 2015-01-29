@@ -291,9 +291,10 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to update
     * @return [mixed]
     */
-    public function update( %pMapperPrefix%_Entity_%pClassName% $data ){
+    public function update( %pMapperPrefix%_Entity_%pClassName% $data, $indexCell = '%pTableIndexCell%', $indexCellVal = null ){
         try{
-            return $this->db->update( '%pTableName%', $data->toArray(), '%pTableIndexCell% = ' . $data->get%pTableIndexCellFixed%() );
+            $val = empty($indexCellVal) ? $data->get%pTableIndexCellFixed%() : $indexCellVal;
+            return $this->db->update( '%pTableName%', $data->toArray(), "'" . $indexCell . "' = " . $val );
         }
         catch( exception $e ){
             throw new Exception( $e );

@@ -73,9 +73,11 @@ interface %pMapperPrefix%_Dao_Interface_%pClassName%
 
     /**
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to update
+    * @param [string] $indexCell = index name of cell which will be useded to do update
+    * @param [string] $indexCellVal = value of index cell which will be compared to existing element
     * @return mixed
     */
-    public function update( %pMapperPrefix%_Entity_%pClassName% $data );
+    public function update( %pMapperPrefix%_Entity_%pClassName% $data, $indexCell, $indexCellVal );
 
     /**
     * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to delete
