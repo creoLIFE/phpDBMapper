@@ -219,6 +219,13 @@ class %pMapperPrefix%_Repository_Base_%pClassName%
         return $status;
     }
 
+    /**
+    * Method will get Last Inserted ID from DB
+    * @return [integer]
+    */
+    public function getLastId(){
+        return $this->_getDao()->getLastId();
+    }
 
     <phpDBMapper:methods>
     /**

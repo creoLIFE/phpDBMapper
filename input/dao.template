@@ -69,7 +69,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             $out = $metadata;
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
 
         return $out;
@@ -98,7 +98,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             }
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
 
         return $out;
@@ -129,7 +129,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             }
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
 
         return false;
@@ -158,7 +158,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             }
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
 
         return $out;
@@ -208,7 +208,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             }
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
 
         return $out;
@@ -266,7 +266,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             }
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
 
         return $out;
@@ -282,7 +282,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             return $this->db->insert( '%pTableName%', $data->toArray() );
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
     }
 
@@ -294,10 +294,10 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     public function update( %pMapperPrefix%_Entity_%pClassName% $data, $indexCell = '%pTableIndexCell%', $indexCellVal = null ){
         try{
             $val = empty($indexCellVal) ? $data->get%pTableIndexCellFixed%() : $indexCellVal;
-            return $this->db->update( '%pTableName%', $data->toArray(), "'" . $indexCell . "' = " . $val );
+            return $this->db->update( '%pTableName%', $data->toArray(), "'" . $indexCell . "' = " . "'" . $val . "'" );
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
     }
 
@@ -313,7 +313,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             return $this->db->delete( '%pTableName%', $where );
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
     }
 
@@ -338,10 +338,23 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
             }
         }
         catch( exception $e ){
-            throw new Exception( $e );
+            //throw new Exception( $e );
         }
 
         return $out;
+    }
+
+    /**
+    * Method will get latest inserted id
+    * @return [integer]
+    */
+    public function getLastId(){
+        try{
+            return $this->db->lastInsertId();
+        }
+        catch( exception $e ){
+            //throw new Exception( $e );
+        }
     }
 
 }
