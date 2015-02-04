@@ -10,8 +10,9 @@ class Application_Form_Generate extends Zend_Form
     private $pFolder;
     private $pDbTables;
     private $pDbTableSelected;
+    private $pDbOutputType;
 
-    public function __construct($pDbHost = '', $pDbName = '', $pDbUser = '', $pDbPassword = '', $pPrefix = 'Main', $pFolder = 'Library', $pDbTables = array(), $pDbTableSelected = '' ){
+    public function __construct($pDbHost = '', $pDbName = '', $pDbUser = '', $pDbPassword = '', $pPrefix = 'Main', $pFolder = 'Library', $pDbTables = array(), $pDbTableSelected = '', $pDbOutputType = null ){
         $this->pDbHost = $pDbHost;
         $this->pDbName = $pDbName;
         $this->pDbUser = $pDbUser;
@@ -20,6 +21,7 @@ class Application_Form_Generate extends Zend_Form
         $this->pFolder = $pFolder;
         $this->pDbTables = $pDbTables;
         $this->pDbTableSelected = $pDbTableSelected;
+        $this->pDbOutputType = $pDbOutputType;
         parent::__construct();
     }
 
@@ -62,6 +64,19 @@ class Application_Form_Generate extends Zend_Form
               ->setValue( $this->pDbPassword )
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
+              ->addValidator('NotEmpty');
+
+        $dbOutputType = new Zend_Form_Element_Select('dboutputtype');
+        $dbOutputType->setLabel('Database output naming convention')
+              ->setRequired(true)
+              ->setMultiOptions( array(
+                'zend_1x' => 'Zend Framework v1.x'
+//                'php_namespace' => 'PHP namespace'
+              ))
+              ->setValue( $this->pDbOutputType )
+              ->addFilter('StripTags')
+              ->addFilter('StringTrim')
+              ->setAttrib('class', 'form-control')
               ->addValidator('NotEmpty');
 
         $dbTable = new Zend_Form_Element_Select('dbtablename');
@@ -113,6 +128,6 @@ class Application_Form_Generate extends Zend_Form
               ->addDecorator('HtmlTag', array('tag'=>'a', 'class'=>'btnBack btn btn-default', 'href'=>'/'));
 
 
-        $this->addElements(array($dbTable, $sPrefix, $sFolder, $fNote, $fNote1, $submit, $back, $id, $dbHost, $dbName, $dbUser, $dbPassword));
+        $this->addElements(array($dbOutputType, $dbTable, $sPrefix, $sFolder, $fNote, $fNote1, $submit, $back, $id, $dbHost, $dbName, $dbUser, $dbPassword));
     }
 }

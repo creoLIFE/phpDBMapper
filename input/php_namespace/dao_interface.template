@@ -1,0 +1,92 @@
+<?php
+/**
+ * Interface definition for %pClassName% DAO classes
+ * Generator: %appName%
+ * @package %pMapperPrefix%\Dao\Interface
+ * @author %appAuthor%
+ * @version %appVer%
+ * @link %appUrl%
+ * @link %appGithubUrl%
+ * @since %pDate%
+ * @license The MIT License (MIT)
+ * @copyright %pYear% creoLIFE.pl
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+**/
+namespace %pMapperPrefix%\Dao\Interface;
+
+defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
+
+interface %pClassName%
+{
+
+    /**
+    * @return [array]
+    */
+    public function getMetadata();
+
+    /**
+    * @param [integer] $id = ID of element
+    * @return [mixed]
+    */
+    public function fetchRow( $id );
+
+    /**
+    * @param [string] $column = column to check
+    * @param [string] $value = value to check
+    * @return [boolean]
+    */
+    public function exists( $column, $value );
+
+    /**
+    * @param [integer] $limit = limitation starts from
+    * @param [integer] $offset = limitation count
+    * @param [array] $where - array of table cell key/value params for where statament
+    * @param [string] $orderBy - order by given column name
+    * @param [string] $orderDirection - order direction
+    * @return [mixed]
+    */
+    public function fetch( $limit, $offset, $where, $orderBy, $orderDirection );
+
+    /**
+    * @param [string] $orderBy - order by given column name
+    * @param [string] $orderDirection - order direction
+    * @return [mixed]
+    */
+    public function fetchAll( $orderBy, $orderDirection );
+
+    /**
+    * @param [array] $searchCriteria = array of searchable params
+    * @param [integer] $limit = limit for list
+    * @param [integer] $offset = offset for limit
+    * @param [array] $order = order criteria
+    * @return [mixed]
+    */
+    public function search( %pMapperPrefix%_Entity_Search_%pClassName% $searchCriteria, $limit, $offset, $order);
+
+    /**
+    * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to insert
+    * @return [mixed]
+    */
+    public function insert( %pMapperPrefix%_Entity_%pClassName% $data );
+
+    /**
+    * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to update
+    * @return mixed
+    */
+    public function update( %pMapperPrefix%_Entity_%pClassName% $data );
+
+    /**
+    * @param [%pMapperPrefix%_Entity_%pClassName%] $data = object with data to delete
+    * @return mixed
+    */
+    public function delete( %pMapperPrefix%_Entity_%pClassName% $data );
+
+    /**
+    * @param [string] $column = column name to count
+    * @return int
+    */
+    public function count( $column );
+
+}

@@ -1,0 +1,257 @@
+<?php
+/**
+ * Repository definition for %pClassName%
+ * Generator: %appName%
+ * @package %pMapperPrefix%\Repository\Base
+ * @author %appAuthor%
+ * @version %appVer%
+ * @link %appUrl%
+ * @link %appGithubUrl%
+ * @since %pDate%
+ * @license The MIT License (MIT)
+ * @copyright %pYear% creoLIFE.pl
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+**/
+namespace %pMapperPrefix%\Repository\Base;
+
+defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
+
+class %pClassName%
+{
+
+    /**
+     * @var [mixed]
+     */
+    private $dao;
+
+    /**
+     * @var [mixed]
+     */
+    private $dbConfig;
+
+    /**
+    * Class constructor
+    * @param [array] $dbConfig - DB config for PDO
+    */
+    public function __construct( $dbConfig = false ){
+        //Set defaults
+        $this->config = $dbConfig;
+    }
+
+    /**
+    * Method will set DAO
+    * @return [mixed]
+    */
+    public function _setDao(%pMapperPrefix%_Dao_%pClassName% $dao){
+        $this->dao = $dao;
+    }
+
+    /**
+    * Method will get DAO
+    * @return [mixed]
+    */
+    public function _getDao(){
+        if (null === $this->dao) {
+            $this->_setDao( new %pMapperPrefix%_Dao_%pClassName%( $this->dbConfig ) );
+        }
+        return $this->dao;
+    }
+
+    /**
+    * Method will get table metadata
+    * @param [string] $columnName = name of column
+    * @return [array]
+    */
+    public function _getMetadata( $columnName = null ){
+        $list = $this->_getDao()->getMetadata();
+        if( empty($columnName) ){
+            return $list;
+        }
+        else{
+            foreach( $list as $key=>$val ){
+                if( $columnName === $key ){
+                    return $val;
+                }
+            }
+        }
+    }
+
+    /**
+    * Method will get number of all elements in DB
+    * @param [string] $columnName = name of column
+    * @return [array]
+    */
+    public function _getCount( $identifier = '%columnIdentity%' ){
+        return $this->_getDao()->count($identifier);
+    }
+
+    /**
+    * Method will get multiple rows from
+    * @param [string] $orderBy - order by given column name
+    * @param [string] $orderDirection - order direction
+    * @return [array]
+    */
+    public function _getAll( $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC' ){
+        //Definition
+        $result = array();
+        $mapper = new %pMapperPrefix%_Mapper_%pClassName%();
+        $orderValidator = new Zend_Validate_Regex(array('pattern' => '/[a-zA-Z0-9_]+/'));
+
+        if ( $orderValidator->isValid($orderBy) && $orderValidator->isValid($orderDirection) ) {
+            $rows = $this->_getDao()->fetchAll( $orderBy, $orderDirection );
+        }
+
+        if( isset($rows) ){
+            foreach( $rows as $row ){
+                $result[] = $mapper->assign(new %pMapperPrefix%_Entity_%pClassName%(), $row);
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
+    * Method will get multiple rows from
+    * @param [integer] $limit = limitation starts from
+    * @param [integer] $offset = limitation count
+    * @param [array] $where - array of table cell key/value params for where statament, example: array(array('cell'=>'products','values'=>'computer','operator'=>'='),array('cell'=>'names','values'=>'apple','operator'=>'='))
+    * @param [string] $orderBy - order by given column name
+    * @param [string] $orderDirection - order direction
+    * @return [array]
+    */
+    public function _get( $limit = 10, $offset = 0, $where = array(), $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC' ){
+        //Definition
+        $result = array();
+        $mapper = new %pMapperPrefix%_Mapper_%pClassName%();
+        $validator = new Zend_Validate_Int();
+        $orderByValidator = new Zend_Validate_Regex(array('pattern' => '/[a-zA-Z0-9_]+/'));
+
+        $offset = $offset < 0 ? 0 : $offset;
+
+        if ( $validator->isValid( $limit ) && $validator->isValid( $offset ) && $orderByValidator->isValid($orderBy) ) {
+            $rows = $this->_getDao()->fetch( $limit, $offset, $where, $orderBy, $orderDirection );
+        }
+
+        if( isset($rows) ){
+            foreach( $rows as $row ){
+                $result[] = $mapper->assign(new %pMapperPrefix%_Entity_%pClassName%(), $row);
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
+    * Method will save element to DB
+    * @param [array] $data = data to save to DB
+    * @return [boolean]
+    */
+    public function save( $data ){
+        //Definition
+        $status = false;
+
+        //Instance classes/objects
+        $mapper = new %pMapperPrefix%_Mapper_%pClassName%();
+        $entity = new %pMapperPrefix%_Entity_%pClassName%();
+
+        //require https://github.com/creoLIFE/Zend/tree/master/Main/Helper class from https://github.com/creoLIFE/Zend/ library
+        $helperParams = new Main_Helper_Params( $data );
+
+        //Run
+        <phpDBMapper:saveParams>
+        $entity->set%pColumnNameFixed%( $helperParams->getParam('%pColumnName%'), %pValidatorPattern% );
+        </phpDBMapper:saveParams>
+
+        try{
+            if( $this->checkIdExists( $entity->get%pTableIndexCellFixed%() ) ){
+                $status = $this->_getDao()->update( $entity );
+            }
+            else{
+                $status = $this->_getDao()->insert( $entity );
+            }
+
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return $status;
+    }
+
+    /**
+    * Method will delete element from DB
+    * @param [array] $data = data to save to DB
+    * @return [boolean]
+    */
+    public function delete( $data ){
+        //Definition
+        $status = false;
+
+        //Instance classes/objects
+        $mapper = new %pMapperPrefix%_Mapper_%pClassName%();
+        $entity = new %pMapperPrefix%_Entity_%pClassName%();
+
+        //require https://github.com/creoLIFE/Zend/tree/master/Main/Helper class from https://github.com/creoLIFE/Zend/ library
+        $helperParams = new Main_Helper_Params( $data );
+
+        //Run
+        <phpDBMapper:deleteParams>
+        $entity->set%pColumnNameFixed%( $helperParams->getParam('%pColumnName%'), %pValidatorPattern% );
+        </phpDBMapper:deleteParams>
+
+        try{
+            $status = $this->_getDao()->delete( $entity );
+        }
+        catch( exception $e ){
+            throw new Exception( $e );
+        }
+
+        return $status;
+    }
+
+
+    <phpDBMapper:methods>
+    /**
+    * Method will get row
+    * @param [%pColumnType%] $%pColumnName% = parameter to search in DB
+    * @return [mixed]
+    */
+    public function get%pColumnNameFixed%( $%pColumnName% ){
+        //Definition
+        $result = array();
+        $mapper = new %pMapperPrefix%_Mapper_%pClassName%();
+
+        $validator = new Zend_Validate_%pValidator%(%pValidatorPattern%);
+        if ($validator->isValid( $%pColumnName% )) {
+            $row = $this->_getDao()->fetchRow( $%pColumnName% );
+        }
+
+        $result = $mapper->assign(new %pMapperPrefix%_Entity_%pClassName%(), $row);
+
+        return $result;
+    }
+
+    /**
+    * Method will check if element in %pColumnNameFixed% exists
+    * @param [%pColumnType%] $value = parameter to check if exists in DB
+    * @return [mixed]
+    */
+    public function check%pColumnNameFixed%Exists( $value ){
+        //Definition
+        $result = false;
+
+        $validator = new Zend_Validate_%pValidator%(%pValidatorPattern%);
+        if ($validator->isValid( $value )) {
+            $result = $this->_getDao()->exists( '%pColumnName%', $value );
+        }
+
+        return $result;
+    }
+    </phpDBMapper:methods>
+
+
+}

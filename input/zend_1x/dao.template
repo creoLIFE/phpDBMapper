@@ -26,6 +26,21 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     private $db;
 
     /**
+     * @var [mixed]
+     */
+    private $lastInsertId = null;
+
+    /**
+     * @var [mixed]
+     */
+    private $lastUpdateId = null;
+
+    /**
+     * @var [mixed]
+     */
+    private $lastId = null;
+
+    /**
     * Class constructor
     * @param [string] $dbDefinition = definition name for db access in config
     * @return [boolean]
@@ -46,7 +61,7 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
                 //Register this instance of DB
                 Zend_Registry::set('db_'.$_dbName, $this->db);
             }
-            
+
             //Set UTF-8 coding for each request
             $this->db->query("SET NAMES 'utf8'");
 
@@ -279,7 +294,10 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     */
     public function insert( %pMapperPrefix%_Entity_%pClassName% $data ){
         try{
-            return $this->db->insert( '%pTableName%', $data->toArray() );
+            $status = $this->db->insert( '%pTableName%', $data->toArray() );
+            $this->lastInsertId = $this->db->lastInsertId();
+            $this->lastId = $this->lastInsertId;
+            return $status;
         }
         catch( exception $e ){
             //throw new Exception( $e );
@@ -294,7 +312,19 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     public function update( %pMapperPrefix%_Entity_%pClassName% $data, $indexCell = '%pTableIndexCell%', $indexCellVal = null ){
         try{
             $val = empty($indexCellVal) ? $data->get%pTableIndexCellFixed%() : $indexCellVal;
-            return $this->db->update( '%pTableName%', $data->toArray(), "'" . $indexCell . "' = " . "'" . $val . "'" );
+            $status = $this->db->update( '%pTableName%', $data->toArray(), "'" . $indexCell . "' = " . "'" . $val . "'" );
+            $lastUpdateId = self::fetch(1,0, array(
+                array(
+                    'cell' => $indexCell,
+                    'operator' => '=',
+                    'values' => $val
+                )
+            ));
+            debug($this->db->_getPrimaryKey);
+            $this->lastUpdateId = isset($lastUpdateId[0]) ? $lastUpdateId[0] : $lastUpdateId;
+            $this->lastId = $this->lastUpdateId;
+            return $status;
+
         }
         catch( exception $e ){
             //throw new Exception( $e );
@@ -345,16 +375,27 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
     }
 
     /**
-    * Method will get latest inserted id
+    * Method will get latest changed id
     * @return [integer]
     */
     public function getLastId(){
-        try{
-            return $this->db->lastInsertId();
-        }
-        catch( exception $e ){
-            //throw new Exception( $e );
-        }
+        return $this->lastId;
+    }
+
+    /**
+    * Method will get latest inserted id
+    * @return [integer]
+    */
+    public function getLastInsertId(){
+        return $this->lastInsertId;
+    }
+
+    /**
+    * Method will get latest inserted id
+    * @return [integer]
+    */
+    public function getLastUpdateId(){
+        return $this->lastUpdateId;
     }
 
 }

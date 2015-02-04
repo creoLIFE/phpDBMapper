@@ -55,7 +55,7 @@ class IndexController extends Zend_Controller_Action
 
         if( $params->getParam('do') === 'generate'){
             $pDb = new Application_Model_Db( $db );
-            
+
             $this->view->homePage = false;
             $tables = $pDb->getTablesList();
             $form = new Application_Form_Generate(
@@ -66,7 +66,8 @@ class IndexController extends Zend_Controller_Action
                     $post->getParam('sprefix') !== '' ? $post->getParam('sprefix') : 'Main',
                     $post->getParam('sfolder') !== '' ? $post->getParam('sfolder') : 'Library',
                     $tables,
-                    $post->getParam('dbtablename')
+                    $post->getParam('dbtablename'),
+                    $post->getParam('dboutputtype')
             );
 
             $pDb->setTableName( $post->getParam('dbtablename') );
@@ -76,7 +77,7 @@ class IndexController extends Zend_Controller_Action
 
             //Set default params
             $pParams = new Application_Model_Globalparams();
-            
+
             $pParams->setpDbConfig( strtolower( $post->getParam('sprefix',null,'Main') ) );
             $pParams->setpMapperPrefix( $post->getParam('sprefix',null,'Main') );
             $pParams->setpTableName( $tables[$post->getParam('dbtablename')] );
@@ -84,6 +85,13 @@ class IndexController extends Zend_Controller_Action
             $pParams->setpTableIndexCellFixed( Application_Model_Helper::getNameFixed( $pDb->getTablePrimaryName() ) );
             $pParams->setpClassName( Application_Model_Helper::getNameFixed( $tables[$post->getParam('dbtablename')] ) );
             //$pParams->setpTableRelation( $pDb->getForeginRelationships() );
+
+            if (file_exists( $dirInput . '/' . $post->getParam('dboutputtype') ) && is_dir( $dirInput . '/' . $post->getParam('dboutputtype') )) {
+                $dirInput = $dirInput . '/' . $post->getParam('dboutputtype');
+            }
+            else{
+                Throw new \Exception('Wrong input path!');
+            }
 
 
             //Create DAO
