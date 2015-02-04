@@ -320,8 +320,9 @@ class %pMapperPrefix%_Dao_%pClassName% implements %pMapperPrefix%_Dao_Interface_
                     'values' => $val
                 )
             ));
-            debug($this->db->_getPrimaryKey);
-            $this->lastUpdateId = isset($lastUpdateId[0]) ? $lastUpdateId[0] : $lastUpdateId;
+            if( isset($lastUpdateId[0]['%pTableIndexCell%']) ){
+                $this->lastUpdateId = $lastUpdateId[0]['%pTableIndexCell%'];
+            }
             $this->lastId = $this->lastUpdateId;
             return $status;
 
