@@ -1,0 +1,12 @@
+body {font:14px/16px tahoma;}
+* {padding:0; margin:0;}
+div.container {margin-top:20px}
+dl label {font-size:12px; color:#666; margin-top:0px;}
+dl label.note {color:#333; margin-top}
+dl #dbtablename-element label {overflow:hidden; text-aligh:left; width:100%; line-height:22px}
+dl #dbtablenameAll-element label {overflow:hidden; text-aligh:left; width:100%; line-height:22px}
+dl .multi-checkbox {float:left; width:16px; height:16px; margin-right:10px;}
+dl #dbtablenameAll-label {display:none}
+dl #dbtablenameAll-element {overflow:hidden; margin-bottom:20px}
+dl dd input {float:left; margin-top:3px; font-size:16px; padding:1px 2px;}
+.btnBack {margin:2px 0 0 10px;}

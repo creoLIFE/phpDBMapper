@@ -70,22 +70,6 @@ class IndexController extends Zend_Controller_Action
                     $post->getParam('dboutputtype')
             );
 
-            $pDb->setTableName( $post->getParam('dbtablename') );
-
-            $sprefix = $post->getParam('sprefix') !== '' ? '/' . $post->getParam('sprefix') : '/Library';
-            $dirOutput = $dirOutput . $sprefix;
-
-            //Set default params
-            $pParams = new Application_Model_Globalparams();
-
-            $pParams->setpDbConfig( strtolower( $post->getParam('sprefix',null,'Main') ) );
-            $pParams->setpMapperPrefix( $post->getParam('sprefix',null,'Main') );
-            $pParams->setpTableName( $tables[$post->getParam('dbtablename')] );
-            $pParams->setpTableIndexCell( $pDb->getTablePrimaryName() );
-            $pParams->setpTableIndexCellFixed( Application_Model_Helper::getNameFixed( $pDb->getTablePrimaryName() ) );
-            $pParams->setpClassName( Application_Model_Helper::getNameFixed( $tables[$post->getParam('dbtablename')] ) );
-            //$pParams->setpTableRelation( $pDb->getForeginRelationships() );
-
             if (file_exists( $dirInput . '/' . $post->getParam('dboutputtype') ) && is_dir( $dirInput . '/' . $post->getParam('dboutputtype') )) {
                 $dirInput = $dirInput . '/' . $post->getParam('dboutputtype');
             }
@@ -93,41 +77,58 @@ class IndexController extends Zend_Controller_Action
                 Throw new \Exception('Wrong input path!');
             }
 
+            $sprefix = $post->getParam('sprefix') !== '' ? '/' . $post->getParam('sprefix') : '/Library';
+            $dirOutput = $dirOutput . $sprefix;
 
-            //Create DAO
-            $dao = new Application_Model_Dao( $dirInput . '/dao.template', $dirOutput . '/Dao/' . $pParams->pClassName . '.php', $pParams );
-            $dao->create();
+            foreach( $post->getParam('dbtablename') as $dbtablename ){
+                $pDb->setTableName( $dbtablename );
 
-            //Create DAO interface
-            $daoInterface = new Application_Model_Dao( $dirInput . '/dao_interface.template', $dirOutput . '/Dao/Interface/' . $pParams->pClassName . '.php', $pParams );
-            $daoInterface->create();
+                //Set default params
+                $pParams = new Application_Model_Globalparams();
 
-            //Create Entity
-            $entity = new Application_Model_Entity( $dirInput . '/entity.template', $dirOutput . '/Entity/' . $pParams->pClassName . '.php', $pParams, $pDb );
-            $entity->create();
+                $pParams->setpDbConfig( strtolower( $post->getParam('sprefix',null,'Main') ) );
+                $pParams->setpMapperPrefix( $post->getParam('sprefix',null,'Main') );
+                $pParams->setpTableName( $tables[$dbtablename] );
+                $pParams->setpTableIndexCell( $pDb->getTablePrimaryName() );
+                $pParams->setpTableIndexCellFixed( Application_Model_Helper::getNameFixed( $pDb->getTablePrimaryName() ) );
+                $pParams->setpClassName( Application_Model_Helper::getNameFixed( $tables[$dbtablename] ) );
+                //$pParams->setpTableRelation( $pDb->getForeginRelationships() );
 
-            //Create Entity Search
-            $entity = new Application_Model_Entity( $dirInput . '/entity_search.template', $dirOutput . '/Entity/Search/' . $pParams->pClassName . '.php', $pParams, $pDb );
-            $entity->create();
+                //Create DAO
+                $dao = new Application_Model_Dao( $dirInput . '/dao.template', $dirOutput . '/Dao/' . $pParams->pClassName . '.php', $pParams );
+                $dao->create();
 
-            //Create User repository
-            $repository = new Application_Model_Repository( $dirInput . '/repository_temp.template', $dirOutput . '/Repository/' . $pParams->pClassName . '_EXAMPLE.php', $pParams );
-            $repository->create();
+                //Create DAO interface
+                $daoInterface = new Application_Model_Dao( $dirInput . '/dao_interface.template', $dirOutput . '/Dao/Interface/' . $pParams->pClassName . '.php', $pParams );
+                $daoInterface->create();
 
-            //Create User repository base
-            $repositoryBase = new Application_Model_Repositorybase( $dirInput . '/repository_base.template', $dirOutput . '/Repository/Base/' . $pParams->pClassName . '.php', $pParams, $pDb );
-            $repositoryBase->create();
+                //Create Entity
+                $entity = new Application_Model_Entity( $dirInput . '/entity.template', $dirOutput . '/Entity/' . $pParams->pClassName . '.php', $pParams, $pDb );
+                $entity->create();
 
-            //Create Mapper
-            $maper = new Application_Model_Mapper( $dirInput . '/mapper.template', $dirOutput . '/Mapper/' . $pParams->pClassName . '.php', $pParams, $pDb );
-            $maper->create();
+                //Create Entity Search
+                $entity = new Application_Model_Entity( $dirInput . '/entity_search.template', $dirOutput . '/Entity/Search/' . $pParams->pClassName . '.php', $pParams, $pDb );
+                $entity->create();
 
-            //Create Unit test
-            $unit = new Application_Model_Unittest( $dirInput . '/unit_test.template', $dirOutput . '/Unittest/' . $pParams->pClassName . '.php', $pParams, $pDb );
-            $unit->create();
+                //Create User repository
+                $repository = new Application_Model_Repository( $dirInput . '/repository_temp.template', $dirOutput . '/Repository/' . $pParams->pClassName . '_EXAMPLE.php', $pParams );
+                $repository->create();
+
+                //Create User repository base
+                $repositoryBase = new Application_Model_Repositorybase( $dirInput . '/repository_base.template', $dirOutput . '/Repository/Base/' . $pParams->pClassName . '.php', $pParams, $pDb );
+                $repositoryBase->create();
+
+                //Create Mapper
+                $maper = new Application_Model_Mapper( $dirInput . '/mapper.template', $dirOutput . '/Mapper/' . $pParams->pClassName . '.php', $pParams, $pDb );
+                $maper->create();
+
+                //Create Unit test
+                $unit = new Application_Model_Unittest( $dirInput . '/unit_test.template', $dirOutput . '/Unittest/' . $pParams->pClassName . '.php', $pParams, $pDb );
+                $unit->create();
 
 
-            $this->view->status = "Stored in to: " . $dirOutput . "</br>";
+                $this->view->status = "Stored in to: " . $dirOutput . "</br>";
+            }
         }
 
         //Run

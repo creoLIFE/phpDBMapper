@@ -79,14 +79,22 @@ class Application_Form_Generate extends Zend_Form
               ->setAttrib('class', 'form-control')
               ->addValidator('NotEmpty');
 
-        $dbTable = new Zend_Form_Element_Select('dbtablename');
+        $dbTableAll = new Zend_Form_Element_MultiCheckbox('dbtablenameAll');
+        $dbTableAll->setLabel('Aaaa')
+            ->setMultiOptions( array(
+                'all' => 'Select ALL above'
+            ))
+            ->setAttrib('class', 'form-control multi-checkbox multi-checkbox-all');
+
+        //$dbTable = new Zend_Form_Element_Select('dbtablename');
+        $dbTable = new Zend_Form_Element_MultiCheckbox('dbtablename');
         $dbTable->setLabel('Database Table name')
               ->setRequired(true)
               ->setValue( $this->pDbTableSelected )
               ->setMultiOptions( $this->pDbTables )
               ->addFilter('StripTags')
               ->addFilter('StringTrim')
-              ->setAttrib('class', 'form-control')
+              ->setAttrib('class', 'form-control multi-checkbox')
               ->addValidator('NotEmpty');
 
         $sPrefix = new Zend_Form_Element_Text('sprefix');
@@ -128,6 +136,6 @@ class Application_Form_Generate extends Zend_Form
               ->addDecorator('HtmlTag', array('tag'=>'a', 'class'=>'btnBack btn btn-default', 'href'=>'/'));
 
 
-        $this->addElements(array($dbOutputType, $dbTable, $sPrefix, $sFolder, $fNote, $fNote1, $submit, $back, $id, $dbHost, $dbName, $dbUser, $dbPassword));
+        $this->addElements(array($dbOutputType, $dbTable, $dbTableAll, $sPrefix, $sFolder, $fNote, $fNote1, $submit, $back, $id, $dbHost, $dbName, $dbUser, $dbPassword));
     }
 }
