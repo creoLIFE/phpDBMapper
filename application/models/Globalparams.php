@@ -124,7 +124,7 @@ class Application_Model_Globalparams
         $this->appName = $this->appName . $this->json->name;
         $this->appAuthor = $this->json->authors[0]->name;
         $this->appUrl = $this->json->homepage;
-        $this->appGithubUrl = $this->json->repositories[0]->url;
+        $this->appGithubUrl = $this->json->github;
         $this->appVer = $this->json->version;
         $this->appLicense = $this->json->licence;
         $this->appCopyright = $this->json->copyright;
