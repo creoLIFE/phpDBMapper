@@ -94,38 +94,14 @@ class IndexController extends Zend_Controller_Action
                 $pParams->setpClassName( Application_Model_Helper::getNameFixed( $tables[$dbtablename] ) );
                 //$pParams->setpTableRelation( $pDb->getForeginRelationships() );
 
-                //Create DAO
-                $dao = new Application_Model_Dao( $dirInput . '/dao.template', $dirOutput . '/Dao/' . $pParams->pClassName . '.php', $pParams );
-                $dao->create();
-
-                //Create DAO interface
-                $daoInterface = new Application_Model_Dao( $dirInput . '/dao_interface.template', $dirOutput . '/Dao/Interface/' . $pParams->pClassName . '.php', $pParams );
-                $daoInterface->create();
-
-                //Create Entity
-                $entity = new Application_Model_Entity( $dirInput . '/entity.template', $dirOutput . '/Entity/' . $pParams->pClassName . '.php', $pParams, $pDb );
-                $entity->create();
-
-                //Create Entity Search
-                $entity = new Application_Model_Entity( $dirInput . '/entity_search.template', $dirOutput . '/Entity/Search/' . $pParams->pClassName . '.php', $pParams, $pDb );
-                $entity->create();
-
-                //Create User repository
-                $repository = new Application_Model_Repository( $dirInput . '/repository_temp.template', $dirOutput . '/Repository/' . $pParams->pClassName . '_EXAMPLE.php', $pParams );
-                $repository->create();
-
-                //Create User repository base
-                $repositoryBase = new Application_Model_Repositorybase( $dirInput . '/repository_base.template', $dirOutput . '/Repository/Base/' . $pParams->pClassName . '.php', $pParams, $pDb );
-                $repositoryBase->create();
-
-                //Create Mapper
-                $maper = new Application_Model_Mapper( $dirInput . '/mapper.template', $dirOutput . '/Mapper/' . $pParams->pClassName . '.php', $pParams, $pDb );
-                $maper->create();
-
-                //Create Unit test
-                $unit = new Application_Model_Unittest( $dirInput . '/unit_test.template', $dirOutput . '/Unittest/' . $pParams->pClassName . '.php', $pParams, $pDb );
-                $unit->create();
-
+                switch($post->getParam('dboutputtype')){
+                    case 'zend_1x':
+                        self::generateZend1x($dirInput, $dirOutput, $pParams, $pDb, $post->getParam('dboutputtype'));
+                        break;
+                    case 'fatfree':
+                        self::generateFatfree($dirInput, $dirOutput, $pParams, $pDb, $post->getParam('dboutputtype'));
+                        break;
+                }
 
                 $this->view->status = "Stored in to: " . $dirOutput . "</br>";
             }
@@ -135,6 +111,57 @@ class IndexController extends Zend_Controller_Action
         $this->view->form = $form;
 
     }
+
+    private function generateZend1x($dirInput, $dirOutput, $pParams, $pDb, $dbOutputType)
+    {
+        //Create DAO
+        $dao = new Application_Model_Dao($dirInput . '/dao.template', $dirOutput . '/Dao/' . $pParams->pClassName . '.php', $pParams, null, $dbOutputType);
+        $dao->create();
+
+        //Create DAO interface
+        $daoInterface = new Application_Model_Dao($dirInput . '/dao_interface.template', $dirOutput . '/Dao/Interface/' . $pParams->pClassName . '.php', $pParams, null, $dbOutputType);
+        $daoInterface->create();
+
+        //Create Entity
+        $entity = new Application_Model_Entity($dirInput . '/entity.template', $dirOutput . '/Entity/' . $pParams->pClassName . '.php', $pParams, $pDb, $dbOutputType);
+        $entity->create();
+
+        //Create Entity Search
+        $entity = new Application_Model_Entity($dirInput . '/entity_search.template', $dirOutput . '/Entity/Search/' . $pParams->pClassName . '.php', $pParams, $pDb, $dbOutputType);
+        $entity->create();
+
+        //Create User repository
+        $repository = new Application_Model_Repository($dirInput . '/repository_temp.template', $dirOutput . '/Repository/' . $pParams->pClassName . '_EXAMPLE.php', $pParams, null, $dbOutputType);
+        $repository->create();
+
+        //Create User repository base
+        $repositoryBase = new Application_Model_Repositorybase($dirInput . '/repository_base.template', $dirOutput . '/Repository/Base/' . $pParams->pClassName . '.php', $pParams, $pDb, $dbOutputType);
+        $repositoryBase->create();
+
+        //Create Mapper
+        $maper = new Application_Model_Mapper($dirInput . '/mapper.template', $dirOutput . '/Mapper/' . $pParams->pClassName . '.php', $pParams, $pDb, $dbOutputType);
+        $maper->create();
+
+        //Create Unit test
+        $unit = new Application_Model_Unittest($dirInput . '/unit_test.template', $dirOutput . '/Unittest/' . $pParams->pClassName . '.php', $pParams, $pDb, $dbOutputType);
+        $unit->create();
+    }
+
+    private function generateFatfree($dirInput, $dirOutput, $pParams, $pDb, $dbOutputType)
+    {
+        //Create DAO
+        $dao = new Application_Model_Dao($dirInput . '/dao.template', $dirOutput . '/Dao/' . $pParams->pClassName . 'Dao.php', $pParams, null, $dbOutputType);
+        $dao->create();
+
+        //Create User repository
+        $repository = new Application_Model_Repository($dirInput . '/repository_temp.template', $dirOutput . '/Repository/' . $pParams->pClassName . 'Repository_EXAMPLE.php', $pParams, null, $dbOutputType);
+        $repository->create();
+
+        //Create User repository base
+        $repositoryBase = new Application_Model_Repositorybase($dirInput . '/repository_base.template', $dirOutput . '/Repository/Base/' . $pParams->pClassName . 'BaseRepository.php', $pParams, $pDb, $dbOutputType);
+        $repositoryBase->create();
+    }
+
 }
 
 

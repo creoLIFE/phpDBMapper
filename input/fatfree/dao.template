@@ -1,0 +1,219 @@
+<?php
+/**
+ * DAO definition for %pClassName%
+ * Generator: %appName%
+ * @package %pMapperPrefix%\Dao
+ * @author %appAuthor%
+ * @version %appVer%
+ * @link %appUrl%
+ * @link %appGithubUrl%
+ * @since %pDate%
+ * @license The MIT License (MIT)
+ * @copyright %pYear% creoLIFE.pl
+ * @uses %pMapperPrefix%\Dao\Interface\%pClassName%
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+**/
+namespace %pMapperPrefix%\Dao;
+
+defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
+
+use \DB\SQL;
+use \DB\SQL\Mapper;
+
+class %pClassName%Dao
+{
+    /**
+     * @var SQL $db - DB instance
+     */
+    private $db;
+
+    /**
+     * @var string $dbName - DB name
+     */
+    private $dbName;
+
+    /**
+     * @return mixed
+     */
+    public function getDb()
+    {
+        return $this->db;
+    }
+
+    /**
+     * @param mixed $db
+     */
+    public function setDb($db)
+    {
+        $this->db = $db;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDbName()
+    {
+        return $this->dbName;
+    }
+
+    /**
+     * @param string $dbName
+     */
+    public function setDbName($dbName)
+    {
+        $this->dbName = $dbName;
+    }
+
+    /**
+     * Class constructor
+     * @param string $dbConfigPath - Mysql config patch
+     * @return void
+     */
+    public function __construct($dbConfigPath = 'mysqldb.www')
+    {
+        $dbConf = \F3::get($dbConfigPath);
+
+        $this->setDb(
+            new SQL(
+                "mysql:host=" . $dbConf['host'] . ";port=" . $dbConf['port'] . ";dbname=" . $dbConf['db'],
+                $dbConf['username'],
+                $dbConf['password']
+            )
+        );
+
+        $this->setDbName('%pTableName%');
+    }
+
+
+    /**
+     * Method will get empty Mapper instance
+     * @return Mapper
+     */
+    public function getMapper()
+    {
+        return new Mapper($this->getDb(), $this->getDbName());
+    }
+
+
+    /**
+     * Method will check if element exists
+     * @param array $where - array of table cell key/value params for where statament
+     * @return boolean
+     */
+    public function exists($where = array())
+    {
+        $mapper = new Mapper($this->getDb(), $this->getDbName());
+
+        $result = $mapper->find(
+            $where,
+            array(
+                'limit' => '1'
+            )
+        );
+
+        return $result ? false : true;
+    }
+
+
+    /**
+     * Method will return all Db fields
+     * @param array $where - array of table cell key/value params for where statament
+     * @return Mapper
+     */
+    public function findOne($where = array())
+    {
+        $mapper = new Mapper($this->getDb(), $this->getDbName());
+
+        $result = $mapper->find(
+            $where,
+            array(
+                'limit' => 1
+            )
+        );
+
+        return $result && isset($result[0]) ? $result[0] : $mapper;
+    }
+
+
+    /**
+     * Method will return all Db fields
+     * @param sring $orderBy - order by given column name
+     * @param sring $orderDirection - order direction
+     * @return mixed
+     */
+    public function findAll($orderBy = '%pTableIndexCell%', $orderDirection = 'DESC')
+    {
+        $mapper = new Mapper($this->getDb(), $this->getDbName());
+
+        $result = $mapper->find(
+            array(),
+            array(
+                'order' => $orderBy . ' ' . (strtoupper($orderDirection) === 'DESC' ? 'DESC' : 'ASC')
+            )
+        );
+
+        return $result;
+    }
+
+
+    /**
+     * Method will return Db fields based on given criteria
+     * @param integer $limit = limitation starts from
+     * @param integer $offset = limitation count
+     * @param array $where - array of table cell key/value params for where statament
+     * @param sring $orderBy - order by given column name
+     * @param sring $orderDirection - order direction
+     * @return mixed
+     */
+    public function find($limit = 10, $offset = 0, $where = array(), $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC')
+    {
+        $limit = $limit < 0 ? 0 : $limit;
+        $offset = $offset < 0 ? 0 : $offset;
+
+        $mapper = new Mapper($this->getDb(), $this->getDbName());
+
+        $result = $mapper->find(
+            $where,
+            array(
+                'order' => $orderBy . ' ' . (strtoupper($orderDirection) === 'DESC' ? 'DESC' : 'ASC'),
+                'limit' => $limit,
+                'offset' => $offset
+            )
+        );
+
+        return $result;
+    }
+
+
+    /**
+     * Method will insert new row in to DB
+     * @param Mapper $mapper = object with data to insert
+     * @return mixed
+     */
+    public function insert(Mapper $mapper)
+    {
+        return $mapper->save();
+    }
+
+    /**
+     * Method will update row by ID
+     * @param Mapper $mapper = object with data to update
+     * @return mixed
+     */
+    public function update(Mapper $mapper)
+    {
+        return $mapper->update();
+    }
+
+    /**
+     * Method will delete specified row
+     * @param Mapper $mapper = object with data to delete
+     * @return mixed
+     */
+    public function delete(Mapper $mapper)
+    {
+        return $mapper->erase();
+    }
+}

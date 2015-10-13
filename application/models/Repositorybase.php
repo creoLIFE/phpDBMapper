@@ -21,9 +21,10 @@ class Application_Model_Repositorybase extends Application_Model_File
     * @param [string] $outputFile - output REPOSITORY BASE file 
     * @param [Application_Model_Globalparams] $globalParams - instance of Application_Model_Globalparams with data
     * @param [mixed] $db - DB instance
+    * @param [string] $dbOutputType - DB instance
     */
-    public function __construct( $inputFile, $outputFile, $globalParams, $db = null ){
-        parent::__construct( $inputFile, $outputFile, $globalParams, $db );
+    public function __construct( $inputFile, $outputFile, $globalParams, $db = null, $dbOutputType = null ){
+        parent::__construct( $inputFile, $outputFile, $globalParams, $db, $dbOutputType );
     }
 
     /**
@@ -31,11 +32,14 @@ class Application_Model_Repositorybase extends Application_Model_File
     * @return [boolean]
     */
     public function create(){
-        parent::updateVaribles();
-        parent::updateLoop('phpDBMapper:methods');
-        parent::updateLoop('phpDBMapper:saveParams');
-        parent::updateLoop('phpDBMapper:deleteParams');
-        return parent::save();
+
+        if( $this->process ) {
+            parent::updateVaribles();
+            parent::updateLoop('phpDBMapper:methods');
+            parent::updateLoop('phpDBMapper:saveParams');
+            parent::updateLoop('phpDBMapper:deleteParams');
+            return parent::save();
+        }
     }
 
 }

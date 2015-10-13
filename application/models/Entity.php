@@ -31,10 +31,12 @@ class Application_Model_Entity extends Application_Model_File
     * @return [boolean]
     */
     public function create(){
-        parent::updateVaribles();
-        parent::updateLoop('phpDBMapper:params');
-        parent::updateLoop('phpDBMapper:methods');
-        return parent::save();
+        if( $this->process ) {
+            parent::updateVaribles();
+            parent::updateLoop('phpDBMapper:params');
+            parent::updateLoop('phpDBMapper:methods');
+            return parent::save();
+        }
     }
 
 }

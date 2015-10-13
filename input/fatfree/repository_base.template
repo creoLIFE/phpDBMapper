@@ -1,0 +1,191 @@
+<?php
+/**
+ * Repository definition for %pClassName%
+ * Generator: %appName%
+ * @package %pMapperPrefix%\Repository\Base
+ * @author %appAuthor%
+ * @version %appVer%
+ * @link %appUrl%
+ * @link %appGithubUrl%
+ * @since %pDate%
+ * @license The MIT License (MIT)
+ * @copyright %pYear% creoLIFE.pl
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+**/
+namespace %pMapperPrefix%\Repository\Base;
+
+defined("_APP_ACCESS") or die(header("HTTP/1.0 404 Not Found"));
+
+use Phplib\Helpers\Params;
+use %pMapperPrefix%\Dao\%pClassName%Dao;
+
+class %pClassName%BaseRepository
+{
+
+    /**
+     * @var mixed $cDao - DAO instance
+     */
+    private $cDao;
+
+    /**
+     * Class constructor
+     */
+    public function __construct()
+    {
+        $this->_setDao(new %pClassName%Dao());
+    }
+
+    /**
+     * Method will set DAO
+     */
+    public function _setDao(%pClassName%Dao $dao)
+    {
+        $this->cDao = $dao;
+    }
+
+    /**
+     * Method will get DAO
+     * @return OfferDao
+     */
+    public function _getDao()
+    {
+        return $this->cDao;
+    }
+
+
+    /**
+     * Method will get all rows from ofer
+     * @param string $orderBy - order by given column name
+     * @param string $orderDirection - order direction
+     * @return mixed
+     */
+    public function _getAll($orderBy = '%pTableIndexCell%', $orderDirection = 'DESC')
+    {
+        //Instance classes/objects
+        $params = new Params(array(
+            'order' => $orderBy,
+            'orderDirection' => $orderDirection
+        ));
+
+        //Run
+        $list = $this->_getDao()->findAll(
+            $params->getParam('order', 'string'),
+            $params->getParam('orderDirection', 'string')
+        );
+
+        return $list;
+    }
+
+
+    /**
+     * Method will get multiple rows from
+     * @param integer $limit = limitation starts from
+     * @param integer $offset = limitation count
+     * @param array $where - array of table cell key/value params for where statament, example: array(array('cell'=>'products','values'=>'computer','operator'=>'='),array('cell'=>'names','values'=>'apple','operator'=>'='))
+     * @param string $orderBy - order by given column name
+     * @param string $orderDirection - order direction
+     * @return [array]
+     */
+    public function _get($limit = 10, $offset = 0, $where = array(), $orderBy = '%pTableIndexCell%', $orderDirection = 'DESC')
+    {
+        //Instance classes/objects
+        $params = new Params(array(
+            'limit' => $limit,
+            'offset' => $offset,
+            'where' => $where,
+            'order' => $orderBy,
+            'orderDirection' => $orderDirection
+        ));
+
+        //Run
+        $list = $this->_getDao()->find(
+            $params->getParam('limit', 'integer'),
+            $params->getParam('offset', 'offset'),
+            $params->getParam('where', 'array'),
+            $params->getParam('order', 'string'),
+            $params->getParam('orderDirection', 'string')
+        );
+
+        return $list;
+    }
+
+
+    /**
+     * Method will find offer in DB by ID
+     * @method findById
+     * @param integer $id
+     * @return mixed
+     */
+    public function getOfferById($id = -1)
+    {
+        //Instance classes/objects
+        $params = new Params(array(
+            '%pTableIndexCell%' => $id
+        ));
+
+        //Run
+        $result = $this->_getDao()->findOne(
+            array(
+                '%pTableIndexCell% =?', $params->getParam('%pTableIndexCell%', 'integer')
+            )
+        );
+
+        return $result;
+    }
+
+
+    /**
+     * Method will insert element to DB
+     * @param array $data = data to save to DB
+     * @return integer|false - ID of inserted row
+     */
+    public function insert($data)
+    {
+        //Instance classes/objects
+        $params = new Params($data);
+        $mapper = $this->_getDao()->getMapper();
+
+        <phpDBMapper:saveParams>
+        $mapper->%pColumnName% = $params->getParam('%pColumnName%', %pValidatorPattern%) ? '' : $params->getParam('%pColumnName%', %pValidatorPattern%);
+        </phpDBMapper:saveParams>
+
+        $response = $this->_getDao()->insert($mapper);
+        return !$response->id ? (int)$response->id : false;
+    }
+
+
+    /**
+     * Method will update element to DB
+     * @param integer $id = ID of row to update
+     * @param array $data = data to save to DB
+     * @return integer|false - ID of updated row
+     */
+    public function update($id, $data)
+    {
+        //Instance classes/objects
+        $params = new Params($data);
+
+        $mapper = self::getOfferById($id);
+
+        <phpDBMapper:deleteParams>
+        $mapper->%pColumnName% = $params->getParam('%pColumnName%', %pValidatorPattern%) ? $mapper->%pColumnName% : $params->getParam('%pColumnName%', %pValidatorPattern%);
+        </phpDBMapper:deleteParams>
+
+        $response = $this->_getDao()->update($mapper);
+        return !$response->id ? (int)$response->id : false;
+    }
+
+
+    /**
+     * Method will delete element from DB
+     * @param integer $id = ID of element to remove
+     * @return boolean
+     */
+    public function delete($id)
+    {
+        $mapper = self::getOfferById($id);
+        return (boolean)$this->_getDao()->delete($mapper);
+    }
+}

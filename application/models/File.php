@@ -50,6 +50,15 @@ class Application_Model_File extends Main_Io
     */
     protected $tableMapper;
 
+    /**
+     * @var [boolean]
+     */
+    public $process = false;
+
+    /**
+     * @var [mixed]
+     */
+    protected $dbOutputType;
 
     /**
     * Class constructor
@@ -57,15 +66,20 @@ class Application_Model_File extends Main_Io
     * @param [string] $outputFile - output file 
     * @param [Application_Model_Globalparams] $globalVars - instance of Application_Model_Globalparams with data
     * @param [mixed] $db - DB instance
+    * @param [string] $dbOutputType - DB instance
     */
-    public function __construct( $file, $outputFile, $globalVars, $db = null ){
-        $this->template = file_get_contents( $file );
-        $this->outputFile = $outputFile;
-        $this->globalVars = $globalVars;
+    public function __construct( $file, $outputFile, $globalVars, $db = null, $dbOutputType = null ){
+        if( file_exists($file) ) {
+            $this->process = true;
+            $this->template = file_get_contents($file);
+            $this->outputFile = $outputFile;
+            $this->globalVars = $globalVars;
+            $this->dbOutputType = $dbOutputType;
 
-        if( isset($db) ){
-            $this->tableRowsInfo = $db->getTableRowsInfo();
-            $this->tableMapper = $db->getTableMapper();
+            if (isset($db)) {
+                $this->tableRowsInfo = $db->getTableRowsInfo();
+                $this->tableMapper = $db->getTableMapper();
+            }
         }
     }
 
@@ -90,24 +104,38 @@ class Application_Model_File extends Main_Io
         //'/<phpDBMapper:params>(.*)<\/phpDBMapper:params>/s'
         preg_match( '/<'.$loopName.'>(.*)<\/'.$loopName.'>/s', $this->template, $loop );
 
-        foreach( $this->tableRowsInfo as $c ){
-            if( $c['pColumnIdentity'] == '1' ){
-                $columnIdentity = $c['pColumnName'];
+        if( isset($loop[1])) {
+            foreach ($this->tableRowsInfo as $c) {
+                if ($c['pColumnIdentity'] == '1') {
+                    $columnIdentity = $c['pColumnName'];
+                }
+
+                $tmp = $loop[1];
+
+                foreach ($c as $key => $val) {
+                    $tmp = str_replace('%' . $key . '%', $val, $tmp);
+
+                    switch($this->dbOutputType){
+                        case 'zend_1x':
+                            $validator = new Application_Model_ZendValidator($val, $tmp);
+                            break;
+                        case 'fatfree':
+                            $validator = new Application_Model_Validator($val, $tmp);
+                            break;
+                        default:
+                            $validator = new Application_Model_Validator($val, $tmp);
+                            break;
+                    }
+
+                    $tmp = $validator->getContent();
+                }
+                $out .= $tmp;
             }
 
-            $tmp = $loop[1];
-
-            foreach( $c as $key=>$val ){
-                $tmp = str_replace( '%'. $key .'%', $val, $tmp );
-                $validator = new Application_Model_Validator($val, $tmp);
-                $tmp = $validator->getContent();
-            }
-            $out .= $tmp;
+            $this->template = str_replace($columnIdHash, $columnIdentity, $this->template);
+            $this->template = preg_replace('/<' . $loopName . '[^>]*?>.*?<\/' . $loopName . '>/is', $out, $this->template);
+            return $this->template;
         }
-
-        $this->template = str_replace( $columnIdHash, $columnIdentity, $this->template );
-        $this->template = preg_replace( '/<'.$loopName.'[^>]*?>.*?<\/'.$loopName.'>/is', $out, $this->template );
-        return $this->template;
     }
 
     /**

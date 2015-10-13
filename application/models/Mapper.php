@@ -31,9 +31,11 @@ class Application_Model_Mapper extends Application_Model_File
     * @return [boolean]
     */
     public function create(){
-        parent::updateVaribles();
-        parent::updateMap();
-        return parent::save();
+        if( $this->process ) {
+            parent::updateVaribles();
+            parent::updateMap();
+            return parent::save();
+        }
     }
 
 }

@@ -12,7 +12,7 @@
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-class Application_Model_Validator
+class Application_Model_ZendValidator
 {
 
     /**
@@ -35,24 +35,24 @@ class Application_Model_Validator
             case 'tinyint':
             case 'int':
                 $this->content = str_replace( $validatorNameKey, 'Int', $this->content );
-                $this->content = str_replace( $validatorPatternKey, "'/[0-9]+/'", $this->content );
+                $this->content = str_replace( $validatorPatternKey, "array('pattern' => '/[0-9]+/')", $this->content );
             break;
             case 'tinytext':
             case 'text':
                 $this->content = str_replace( $validatorNameKey, 'Regex', $this->content );
-                $this->content = str_replace( $validatorPatternKey, "'/[a-zA-Z0-9\s\#\.\,\!\?\-\_]+/'", $this->content );
+                $this->content = str_replace( $validatorPatternKey, "array('pattern' => '/[a-zA-Z0-9\s\#\.\,\!\?\-\_]+/')", $this->content );
             break;
             case 'varchar':
                 $this->content = str_replace( $validatorNameKey, 'Regex', $this->content );
-                $this->content = str_replace( $validatorPatternKey, "'/[a-zA-Z0-9\s\.\,\!\?\-\_\:\/]+/'", $this->content );
+                $this->content = str_replace( $validatorPatternKey, "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_\:\/]+/')", $this->content );
             break;
             case 'datetime':
                 $this->content = str_replace( $validatorNameKey, 'Date', $this->content );
-                $this->content = str_replace( $validatorPatternKey, "'Y-m-d H:m:s.u'", $this->content );
+                $this->content = str_replace( $validatorPatternKey, "array('format' => 'Y-m-d H:m:s.u')", $this->content );
             break;
             case 'longtext':
                 $this->content = str_replace( $validatorNameKey, 'Regex', $this->content );
-                $this->content = str_replace( $validatorPatternKey, "'/[a-zA-Z0-9\s\.\,\!\?\-\_]+/'", $this->content );
+                $this->content = str_replace( $validatorPatternKey, "array('pattern' => '/[a-zA-Z0-9\s\.\,\!\?\-\_]+/')", $this->content );
             break;
         }
     }

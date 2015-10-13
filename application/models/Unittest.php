@@ -30,8 +30,10 @@ class Application_Model_Unittest extends Application_Model_File
     * @return [boolean]
     */
     public function create(){
-        parent::updateVaribles();
-        return parent::save();
+        if( $this->process ) {
+            parent::updateVaribles();
+            return parent::save();
+        }
     }
 
 }

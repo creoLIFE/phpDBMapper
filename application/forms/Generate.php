@@ -70,8 +70,9 @@ class Application_Form_Generate extends Zend_Form
         $dbOutputType->setLabel('Database output naming convention')
               ->setRequired(true)
               ->setMultiOptions( array(
-                'zend_1x' => 'Zend Framework v1.x'
-//                'php_namespace' => 'PHP namespace'
+                'zend_1x' => 'Zend Framework v1.x',
+                //'php_namespace' => 'PHP namespace'
+                'fatfree' => 'FatFree Framework'
               ))
               ->setValue( $this->pDbOutputType )
               ->addFilter('StripTags')
